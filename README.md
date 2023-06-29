@@ -1,7 +1,7 @@
 This repository is collection of reference projects for XYZ school c++ course.
 Just open the Game.sln and enjoy.
 
-# SFMLTeamplte
+# SFMLTemplate
 This is simple template project for developing games with SFML library.
 Just open the Game.sln, compile and run project named Game. If you want to create a game - copy it, renaming it's directory and files SFMLTemplate.vcxproj and SFMLTemplate.vcxproj.filters.
 Then add new project to Game.sln via visual studio.

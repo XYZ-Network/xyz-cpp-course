@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorld", "HelloWorld\He
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TemperatureConversioin", "TemperatureConversioin\TemperatureConversioin.vcxproj", "{F43E6BA2-CC16-4848-B93D-14291935165C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PolishCalc", "PolishCalc\PolishCalc.vcxproj", "{251313FA-0DF9-4999-9BE0-1816E99C3DEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +63,14 @@ Global
 		{F43E6BA2-CC16-4848-B93D-14291935165C}.Release|x64.Build.0 = Release|x64
 		{F43E6BA2-CC16-4848-B93D-14291935165C}.Release|x86.ActiveCfg = Release|Win32
 		{F43E6BA2-CC16-4848-B93D-14291935165C}.Release|x86.Build.0 = Release|Win32
+		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Debug|x64.ActiveCfg = Debug|x64
+		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Debug|x64.Build.0 = Debug|x64
+		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Debug|x86.ActiveCfg = Debug|Win32
+		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Debug|x86.Build.0 = Debug|Win32
+		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Release|x64.ActiveCfg = Release|x64
+		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Release|x64.Build.0 = Release|x64
+		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Release|x86.ActiveCfg = Release|Win32
+		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

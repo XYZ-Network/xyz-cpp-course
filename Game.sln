@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ApplesGame", "ApplesGame\Ap
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorld", "HelloWorld\HelloWorld.vcxproj", "{DE6D1791-63D2-4E16-A0EA-4BC9DE0C7426}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TemperatureConversioin", "TemperatureConversioin\TemperatureConversioin.vcxproj", "{F43E6BA2-CC16-4848-B93D-14291935165C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{DE6D1791-63D2-4E16-A0EA-4BC9DE0C7426}.Release|x64.Build.0 = Release|x64
 		{DE6D1791-63D2-4E16-A0EA-4BC9DE0C7426}.Release|x86.ActiveCfg = Release|Win32
 		{DE6D1791-63D2-4E16-A0EA-4BC9DE0C7426}.Release|x86.Build.0 = Release|Win32
+		{F43E6BA2-CC16-4848-B93D-14291935165C}.Debug|x64.ActiveCfg = Debug|x64
+		{F43E6BA2-CC16-4848-B93D-14291935165C}.Debug|x64.Build.0 = Debug|x64
+		{F43E6BA2-CC16-4848-B93D-14291935165C}.Debug|x86.ActiveCfg = Debug|Win32
+		{F43E6BA2-CC16-4848-B93D-14291935165C}.Debug|x86.Build.0 = Debug|Win32
+		{F43E6BA2-CC16-4848-B93D-14291935165C}.Release|x64.ActiveCfg = Release|x64
+		{F43E6BA2-CC16-4848-B93D-14291935165C}.Release|x64.Build.0 = Release|x64
+		{F43E6BA2-CC16-4848-B93D-14291935165C}.Release|x86.ActiveCfg = Release|Win32
+		{F43E6BA2-CC16-4848-B93D-14291935165C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

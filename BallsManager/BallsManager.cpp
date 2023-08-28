@@ -26,11 +26,37 @@ int main()
 
 		if (command == "1")
 		{
-
+			std::cout << "Enter article: ";
+			int article = -1;
+			std::cin >> article;
+			if (article < 0 || article > NUM_BALLS - 1)
+			{
+				std::cout << "Incorrect article!" << std::endl;
+			}
+			else
+			{
+				++balls[article];
+				std::cout << "Success!" << std::endl;
+			}
 		}
 		else if (command == "2")
 		{
-
+			std::cout << "Enter article: ";
+			int article = -1;
+			std::cin >> article;
+			if (article < 0 || article > NUM_BALLS - 1)
+			{
+				std::cout << "Incorrect article!" << std::endl;
+			}
+			else if (balls[article] == 0)
+			{
+				std::cout << "There are no balls of article " << article << std::endl;
+			}
+			else
+			{
+				--balls[article];
+				std::cout << "Success!" << std::endl;
+			}
 		}
 		else if (command == "3")
 		{
@@ -48,7 +74,12 @@ int main()
 		}
 		else if (command == "4")
 		{
-
+			int ballsTotal = 0;
+			for (const int& ballsAmount : balls)
+			{
+				ballsTotal += ballsAmount;
+			}
+			std::cout << "There are " << ballsTotal << " balls." << std::endl;
 		}
 		else if (command == "5")
 		{

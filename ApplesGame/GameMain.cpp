@@ -2,70 +2,102 @@
 // Authored by Aleksandr Rybalka (polterageist@gmail.com)
 
 #include <SFML/Graphics.hpp>
-#include <cstdlib>
+#include <SFML/Audio.hpp>
 
-#include "Game.h"
-
-using namespace ApplesGame;
-
-void HandleWindowEvents(sf::RenderWindow& window)
-{
-	sf::Event event;
-	while (window.pollEvent(event))
-	{
-		// Close window if close button or Escape key pressed
-		if (event.type == sf::Event::Closed)
-		{
-			window.close();
-		}
-		if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
-		{
-			window.close();
-		}
-	}
-}
+const std::string RESOURCES_PATH = "Resources/";
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+const float INITIAL_SPEED = 100.f; // Pixels per second
+const float PLAYER_SIZE = 20.f;
+const float ACCELERATION = 20.f; // Pixels per second
 
 int main()
 {
-	// Init random number generator
-	unsigned int seed = (unsigned int)time(nullptr); // Get current time as seed. You can also use any other number to fix randomization
-	srand(seed);
-
 	// Init window
-	sf::RenderWindow window(sf::VideoMode(ApplesGame::SCREEN_WIDTH, ApplesGame::SCREEN_HEGHT), "AppleGame");
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game!");
 
-	ApplesGame::GameState gameState;
-	InitGame(gameState);
+	// Init player state
+	float playerX = SCREEN_WIDTH / 2.f;
+	float playerY = SCREEN_HEIGHT / 2.f;
+	float playerSpeed = INITIAL_SPEED;
+	int playerDirection = 0; // 0 - Right, 1 - Up, 2 - Left, 3 - Down
 
-	// Init game clock
-	sf::Clock game_clock;
-	sf::Time lastTime = game_clock.getElapsedTime();
+	// Init player shape
+	sf::RectangleShape playerShape;
+	playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
+	playerShape.setFillColor(sf::Color::Red);
+	playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
+	playerShape.setPosition(playerX, playerY);
 
-	// Game loop
+	// Init game clocks
+	sf::Clock gameClock;
+	float lastTime = gameClock.getElapsedTime().asSeconds();
+
+	// Main loop
 	while (window.isOpen())
 	{
-		HandleWindowEvents(window);
+		// Calculate time delta
+		float currentTime = gameClock.getElapsedTime().asSeconds();
+		float deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
 
-		if (!window.isOpen())
+		// Read events
+		sf::Event event;
+		while (window.pollEvent(event))
 		{
-			return 0;
+			if (event.type == sf::Event::Closed)
+				window.close();
 		}
 
-		HandleInput(gameState);
+		// Handle input
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			playerDirection = 0;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{
+			playerDirection = 1;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			playerDirection = 2;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			playerDirection = 3;
+		}
 
-		// Calculate time delta
-		sf::Time currentTime = game_clock.getElapsedTime();
-		float timeDelta = currentTime.asSeconds() - lastTime.asSeconds();
-		lastTime = currentTime;
-		UpdateGame(gameState, timeDelta);
+		// Update player state
+		playerSpeed += ACCELERATION * deltaTime;
 
-		// Draw everything here
-		// Clear the window first
+		if (playerDirection == 0)
+		{
+			playerX += playerSpeed * deltaTime;
+		}
+		else if (playerDirection == 1)
+		{
+			playerY -= playerSpeed * deltaTime;
+		}
+		else if (playerDirection == 2)
+		{
+			playerX -= playerSpeed * deltaTime;
+		}
+		else if (playerDirection == 3)
+		{
+			playerY += playerSpeed * deltaTime;
+		}
+
+		// Check screen borders collision
+		if (playerX - PLAYER_SIZE / 2.f < 0.f || playerX + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
+			playerY - PLAYER_SIZE / 2.f < 0.f || playerY + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
+		{
+			window.close();
+			break;
+		}
+
 		window.clear();
-
-		DrawGame(gameState, window);
-
-		// End the current frame, display window contents on screen
+		playerShape.setPosition(playerX, playerY);
+		window.draw(playerShape);
 		window.display();
 	}
 

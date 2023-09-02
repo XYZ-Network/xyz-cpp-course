@@ -48,8 +48,10 @@ int main()
                 max = guess - 1;
             }
         }
-        // if min >= max
-        if (min >= max)
+
+        // Warning! There was a bug in screencast
+        // if min > max
+        if (min > max)
         {
             // say user hi is cheating and break the cycle
             std::cout << "You're cheating!" << std::endl;

@@ -92,7 +92,6 @@ int main()
 		}
 
 		// Update player state
-		playerSpeed += ACCELERATION * deltaTime;
 
 		if (playerDirection == 0)
 		{
@@ -144,6 +143,7 @@ int main()
 				{
 					isAppleEaten[i] = true;
 					++numEatenApples;
+					playerSpeed += ACCELERATION;
 				}
 			}
 		}

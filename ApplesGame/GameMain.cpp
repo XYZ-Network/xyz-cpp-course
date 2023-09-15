@@ -36,12 +36,10 @@ int main()
 	// Init apples
 	float applesX[NUM_APPLES];
 	float applesY[NUM_APPLES];
-	bool isAppleEaten[NUM_APPLES];
 	sf::CircleShape applesShape[NUM_APPLES];
 
 	for (int i = 0; i < NUM_APPLES; ++i)
 	{
-		isAppleEaten[i] = false;
 		applesX[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
 		applesY[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 		 
@@ -121,47 +119,37 @@ int main()
 		// Find player collisions with apples
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
-			if (!isAppleEaten[i])
+			// Check collisions for squares
+			/* 
+			float dx = fabs(playerX - applesX[i]);
+			float dy = fabs(playerY - applesY[i]);
+			if (dx <= (APPLE_SIZE + PLAYER_SIZE) / 2.f &&
+				dy <= (APPLE_SIZE + PLAYER_SIZE) / 2.f)
 			{
-				// Check collisions for squares
-				/* 
-				float dx = fabs(playerX - applesX[i]);
-				float dy = fabs(playerY - applesY[i]);
-				if (dx <= (APPLE_SIZE + PLAYER_SIZE) / 2.f &&
-					dy <= (APPLE_SIZE + PLAYER_SIZE) / 2.f)
-				{
-					isAppleEaten[i] = true;
-					++numEatenApples;
-				}
-				*/
-
-				// Check collisions for circles
-				float squareDistance = (playerX - applesX[i]) * (playerX - applesX[i]) +
-					(playerY - applesY[i]) * (playerY - applesY[i]);
-				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
-				if (squareDistance <= squareRadiusSum)
-				{
-					isAppleEaten[i] = true;
-					++numEatenApples;
-					playerSpeed += ACCELERATION;
-				}
+				isAppleEaten[i] = true;
+				++numEatenApples;
 			}
-		}
+			*/
 
-		if (numEatenApples == NUM_APPLES)
-		{
-			window.close();
-			break;
+			// Check collisions for circles
+			float squareDistance = (playerX - applesX[i]) * (playerX - applesX[i]) +
+				(playerY - applesY[i]) * (playerY - applesY[i]);
+			float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
+			if (squareDistance <= squareRadiusSum)
+			{
+				applesX[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				applesY[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				++numEatenApples;
+				playerSpeed += ACCELERATION;
+			}
 		}
 
 		window.clear();
 		playerShape.setPosition(playerX, playerY);
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
-			if (!isAppleEaten[i])
-			{
-				window.draw(applesShape[i]);
-			}
+			applesShape[i].setPosition(applesX[i], applesY[i]);
+			window.draw(applesShape[i]);
 		}
 		window.draw(playerShape);
 		window.display();

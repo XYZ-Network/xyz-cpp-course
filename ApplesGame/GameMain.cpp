@@ -12,6 +12,7 @@ const float PLAYER_SIZE = 20.f;
 const float ACCELERATION = 20.f; // Pixels per second
 const int NUM_APPLES = 20;
 const float APPLE_SIZE = 20.f;
+const float PAUSE_LENGTH = 3.f;
 
 int main()
 {
@@ -55,6 +56,13 @@ int main()
 	sf::Clock gameClock;
 	float lastTime = gameClock.getElapsedTime().asSeconds();
 
+	bool isGameFinished = false;
+	float gameFinishTime = lastTime;
+	sf::RectangleShape background;
+	background.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	background.setFillColor(sf::Color::Black);
+	background.setPosition(0.f, 0.f);
+
 	// Main loop
 	while (window.isOpen())
 	{
@@ -68,83 +76,124 @@ int main()
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
+			{
 				window.close();
-		}
-
-		// Handle input
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		{
-			playerDirection = 0;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		{
-			playerDirection = 1;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		{
-			playerDirection = 2;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		{
-			playerDirection = 3;
-		}
-
-		// Update player state
-
-		if (playerDirection == 0)
-		{
-			playerX += playerSpeed * deltaTime;
-		}
-		else if (playerDirection == 1)
-		{
-			playerY -= playerSpeed * deltaTime;
-		}
-		else if (playerDirection == 2)
-		{
-			playerX -= playerSpeed * deltaTime;
-		}
-		else if (playerDirection == 3)
-		{
-			playerY += playerSpeed * deltaTime;
-		}
-
-		// Check screen borders collision
-		if (playerX - PLAYER_SIZE / 2.f < 0.f || playerX + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
-			playerY - PLAYER_SIZE / 2.f < 0.f || playerY + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
-		{
-			window.close();
-			break;
-		}
-
-		// Find player collisions with apples
-		for (int i = 0; i < NUM_APPLES; ++i)
-		{
-			// Check collisions for squares
-			/* 
-			float dx = fabs(playerX - applesX[i]);
-			float dy = fabs(playerY - applesY[i]);
-			if (dx <= (APPLE_SIZE + PLAYER_SIZE) / 2.f &&
-				dy <= (APPLE_SIZE + PLAYER_SIZE) / 2.f)
-			{
-				isAppleEaten[i] = true;
-				++numEatenApples;
+				break;
 			}
-			*/
-
-			// Check collisions for circles
-			float squareDistance = (playerX - applesX[i]) * (playerX - applesX[i]) +
-				(playerY - applesY[i]) * (playerY - applesY[i]);
-			float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
-			if (squareDistance <= squareRadiusSum)
+			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
 			{
-				applesX[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				applesY[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
-				++numEatenApples;
-				playerSpeed += ACCELERATION;
+				window.close();
+				break;
+			}
+		}
+
+		if (!isGameFinished)
+		{
+			// Handle input
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			{
+				playerDirection = 0;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+			{
+				playerDirection = 1;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+			{
+				playerDirection = 2;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			{
+				playerDirection = 3;
+			}
+
+			// Update player state
+
+			if (playerDirection == 0)
+			{
+				playerX += playerSpeed * deltaTime;
+			}
+			else if (playerDirection == 1)
+			{
+				playerY -= playerSpeed * deltaTime;
+			}
+			else if (playerDirection == 2)
+			{
+				playerX -= playerSpeed * deltaTime;
+			}
+			else if (playerDirection == 3)
+			{
+				playerY += playerSpeed * deltaTime;
+			}
+
+			// Find player collisions with apples
+			for (int i = 0; i < NUM_APPLES; ++i)
+			{
+				// Check collisions for squares
+				/*
+				float dx = fabs(playerX - applesX[i]);
+				float dy = fabs(playerY - applesY[i]);
+				if (dx <= (APPLE_SIZE + PLAYER_SIZE) / 2.f &&
+					dy <= (APPLE_SIZE + PLAYER_SIZE) / 2.f)
+				{
+					isAppleEaten[i] = true;
+					++numEatenApples;
+				}
+				*/
+
+				// Check collisions for circles
+				float squareDistance = (playerX - applesX[i]) * (playerX - applesX[i]) +
+					(playerY - applesY[i]) * (playerY - applesY[i]);
+				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
+				if (squareDistance <= squareRadiusSum)
+				{
+					applesX[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+					applesY[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+					++numEatenApples;
+					playerSpeed += ACCELERATION;
+				}
+			}
+
+			// Check screen borders collision
+			if (playerX - PLAYER_SIZE / 2.f < 0.f || playerX + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
+				playerY - PLAYER_SIZE / 2.f < 0.f || playerY + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
+			{
+				isGameFinished = true;
+				gameFinishTime = currentTime;
+			}
+		}
+		else
+		{
+			if (currentTime - gameFinishTime <= PAUSE_LENGTH)
+			{
+				background.setFillColor(sf::Color::Red);
+			}
+			else
+			{
+				// Reset backgound
+				background.setFillColor(sf::Color::Black);
+				
+				// Reset player
+				playerX = SCREEN_WIDTH / 2.f;
+				playerY = SCREEN_HEIGHT / 2.f;
+				playerSpeed = INITIAL_SPEED;
+				playerDirection = 0;
+
+				// Reset apples
+				for (int i = 0; i < NUM_APPLES; ++i)
+				{
+					applesX[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+					applesY[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				}
+
+				// Reset game state
+				numEatenApples = 0;
+				isGameFinished = false;
 			}
 		}
 
 		window.clear();
+		window.draw(background);
 		playerShape.setPosition(playerX, playerY);
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{

@@ -13,6 +13,8 @@ const float ACCELERATION = 20.f; // Pixels per second
 const int NUM_APPLES = 20;
 const float APPLE_SIZE = 20.f;
 const float PAUSE_LENGTH = 3.f;
+const int NUM_ROCKS = 10;
+const float ROCK_SIZE = 15.f;
 
 int main()
 {
@@ -51,6 +53,21 @@ int main()
 	}
 
 	int numEatenApples = 0;
+
+	// Init rocks
+	float rocksX[NUM_ROCKS];
+	float rocksY[NUM_ROCKS];
+	sf::RectangleShape rocksShape[NUM_ROCKS];
+	for (int i = 0; i < NUM_ROCKS; ++i)
+	{
+		rocksX[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+		rocksY[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+
+		rocksShape[i].setSize(sf::Vector2f(ROCK_SIZE, ROCK_SIZE));
+		rocksShape[i].setFillColor(sf::Color::Yellow);
+		rocksShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
+		rocksShape[i].setPosition(rocksX[i], rocksY[i]);
+	}
 
 	// Init game clocks
 	sf::Clock gameClock;
@@ -154,6 +171,21 @@ int main()
 				}
 			}
 
+			// Find player collisions with rocks
+			for (int i = 0; i < NUM_ROCKS; ++i)
+			{
+				// Check collisions for squares
+				
+				float dx = fabs(playerX - rocksX[i]);
+				float dy = fabs(playerY - rocksY[i]);
+				if (dx <= (ROCK_SIZE + PLAYER_SIZE) / 2.f &&
+					dy <= (ROCK_SIZE + PLAYER_SIZE) / 2.f)
+				{
+					isGameFinished = true;
+					gameFinishTime = currentTime;
+				}
+			}
+
 			// Check screen borders collision
 			if (playerX - PLAYER_SIZE / 2.f < 0.f || playerX + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
 				playerY - PLAYER_SIZE / 2.f < 0.f || playerY + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
@@ -186,6 +218,13 @@ int main()
 					applesY[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 				}
 
+				// Reset rocks
+				for (int i = 0; i < NUM_ROCKS; ++i)
+				{
+					rocksX[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+					rocksY[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				}
+
 				// Reset game state
 				numEatenApples = 0;
 				isGameFinished = false;
@@ -199,6 +238,12 @@ int main()
 		{
 			applesShape[i].setPosition(applesX[i], applesY[i]);
 			window.draw(applesShape[i]);
+		}
+
+		for (int i = 0; i < NUM_ROCKS; ++i)
+		{
+			rocksShape[i].setPosition(rocksX[i], rocksY[i]);
+			window.draw(rocksShape[i]);
 		}
 		window.draw(playerShape);
 		window.display();

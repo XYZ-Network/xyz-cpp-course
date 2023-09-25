@@ -32,6 +32,241 @@ enum class PlayerDirection
 
 typedef Vector2D Position2D;
 
+Position2D GetRandomPositionInScreen()
+{
+	Position2D result;
+	result.x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+	result.y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+	return result;
+}
+
+bool IsRectanglesCollide(Position2D rect1Position, Vector2D rect1Size,
+	Position2D rect2Position, Vector2D rect2Size)
+{
+	float dx = fabs(rect1Position.x - rect2Position.x);
+	float dy = fabs(rect1Position.y - rect2Position.y);
+	return (dx <= (rect1Size.x + rect2Size.x) / 2.f &&
+		dy <= (rect1Size.y + rect2Size.y) / 2.f);
+}
+
+bool IsCirclesCollide(Position2D circle1Position, float circle1Radius,
+	Position2D circle2Position, float circle2Radius)
+{
+	float squareDistance = (circle1Position.x - circle2Position.x) * 
+		(circle1Position.x - circle2Position.x) +
+		(circle1Position.y - circle2Position.y) * (circle1Position.y - circle2Position.y);
+	float squareRadiusSum = (circle1Radius + circle2Radius) * (circle1Radius + circle2Radius);
+	return squareDistance <= squareRadiusSum;
+}
+
+struct GameState
+{
+	// Player data
+	Position2D playerPosition;
+	float playerSpeed = INITIAL_SPEED;
+	PlayerDirection playerDirection = PlayerDirection::Right;
+	sf::RectangleShape playerShape;
+
+	// Apples data
+	Position2D applesPositions[NUM_APPLES];
+	sf::CircleShape applesShape[NUM_APPLES];
+
+	// Rocks data
+	Position2D rocksPositions[NUM_ROCKS];
+	sf::RectangleShape rocksShape[NUM_ROCKS];
+
+	// Global game data
+	int numEatenApples = 0;
+	bool isGameFinished = false;
+	float timeSinceGameFinish = 0.f;
+	sf::RectangleShape background;
+};
+
+void InitGame(GameState& gameState)
+{
+	// Init player state
+	gameState.playerPosition = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
+	gameState.playerSpeed = INITIAL_SPEED;
+	gameState.playerDirection = PlayerDirection::Right;
+
+	// Init player shape
+	gameState.playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
+	gameState.playerShape.setFillColor(sf::Color::Red);
+	gameState.playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
+	gameState.playerShape.setPosition(gameState.playerPosition.x, gameState.playerPosition.y);
+
+	// Init apples
+	for (int i = 0; i < NUM_APPLES; ++i)
+	{
+		gameState.applesPositions[i] = GetRandomPositionInScreen();
+
+		gameState.applesShape[i].setRadius(APPLE_SIZE / 2.f);
+		gameState.applesShape[i].setFillColor(sf::Color::Green);
+		gameState.applesShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
+		gameState.applesShape[i].setPosition(gameState.applesPositions[i].x, gameState.applesPositions[i].y);
+	}
+
+	// Init rocks
+	for (int i = 0; i < NUM_ROCKS; ++i)
+	{
+		gameState.rocksPositions[i] = GetRandomPositionInScreen();
+
+		gameState.rocksShape[i].setSize(sf::Vector2f(ROCK_SIZE, ROCK_SIZE));
+		gameState.rocksShape[i].setFillColor(sf::Color::Yellow);
+		gameState.rocksShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
+		gameState.rocksShape[i].setPosition(gameState.rocksPositions[i].x, gameState.rocksPositions[i].y);
+	}
+
+	gameState.numEatenApples = 0;
+	gameState.isGameFinished = false;
+	gameState.timeSinceGameFinish = 0;
+	
+	gameState.background.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+	gameState.background.setFillColor(sf::Color::Black);
+	gameState.background.setPosition(0.f, 0.f);
+}
+
+void UpdateGame(GameState& gameState, float deltaTime)
+{
+	// Update game state
+	if (!gameState.isGameFinished)
+	{
+		// Handle input
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			gameState.playerDirection = PlayerDirection::Right;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{
+			gameState.playerDirection = PlayerDirection::Up;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			gameState.playerDirection = PlayerDirection::Left;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			gameState.playerDirection = PlayerDirection::Down;
+		}
+
+		// Update player state
+		switch (gameState.playerDirection)
+		{
+		case PlayerDirection::Right:
+		{
+			gameState.playerPosition.x += gameState.playerSpeed * deltaTime;
+			break;
+		}
+		case PlayerDirection::Up:
+		{
+			gameState.playerPosition.y -= gameState.playerSpeed * deltaTime;
+			break;
+		}
+		case PlayerDirection::Left:
+		{
+			gameState.playerPosition.x -= gameState.playerSpeed * deltaTime;
+			break;
+		}
+		case PlayerDirection::Down:
+		{
+			gameState.playerPosition.y += gameState.playerSpeed * deltaTime;
+			break;
+		}
+		}
+
+		// Find player collisions with apples
+		for (int i = 0; i < NUM_APPLES; ++i)
+		{
+			if (IsCirclesCollide(gameState.playerPosition, PLAYER_SIZE / 2.f,
+				gameState.applesPositions[i], APPLE_SIZE / 2.f))
+			{
+				gameState.applesPositions[i] = GetRandomPositionInScreen();
+				++gameState.numEatenApples;
+				gameState.playerSpeed += ACCELERATION;
+			}
+		}
+
+		// Find player collisions with rocks
+		for (int i = 0; i < NUM_ROCKS; ++i)
+		{
+			if (IsRectanglesCollide(gameState.playerPosition, { PLAYER_SIZE, PLAYER_SIZE },
+				gameState.rocksPositions[i], {ROCK_SIZE, ROCK_SIZE}))
+			{
+				gameState.isGameFinished = true;
+				gameState.timeSinceGameFinish = 0.f;
+			}
+		}
+
+		// Check screen borders collision
+		if (gameState.playerPosition.x - PLAYER_SIZE / 2.f < 0.f || gameState.playerPosition.x + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
+			gameState.playerPosition.y - PLAYER_SIZE / 2.f < 0.f || gameState.playerPosition.y + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
+		{
+			gameState.isGameFinished = true;
+			gameState.timeSinceGameFinish = 0.f;
+		}
+	}
+	else
+	{
+		if (gameState.timeSinceGameFinish <= PAUSE_LENGTH)
+		{
+			gameState.timeSinceGameFinish += deltaTime;
+			gameState.background.setFillColor(sf::Color::Red);
+		}
+		else
+		{
+			// Reset backgound
+			gameState.background.setFillColor(sf::Color::Black);
+
+			// Reset player
+			gameState.playerPosition.x = SCREEN_WIDTH / 2.f;
+			gameState.playerPosition.y = SCREEN_HEIGHT / 2.f;
+			gameState.playerSpeed = INITIAL_SPEED;
+			gameState.playerDirection = PlayerDirection::Right;
+
+			// Reset apples
+			for (int i = 0; i < NUM_APPLES; ++i)
+			{
+				gameState.applesPositions[i] = GetRandomPositionInScreen();
+			}
+
+			// Reset rocks
+			for (int i = 0; i < NUM_ROCKS; ++i)
+			{
+				gameState.rocksPositions[i] = GetRandomPositionInScreen();
+			}
+
+			// Reset game state
+			gameState.numEatenApples = 0;
+			gameState.isGameFinished = false;
+			gameState.timeSinceGameFinish = 0.f;
+		}
+	}
+}
+
+void DrawGame(GameState& gameState, sf::RenderWindow& window)
+{
+	window.draw(gameState.background);
+	gameState.playerShape.setPosition(gameState.playerPosition.x, gameState.playerPosition.y);
+	window.draw(gameState.playerShape);
+	for (int i = 0; i < NUM_APPLES; ++i)
+	{
+		gameState.applesShape[i].setPosition(gameState.applesPositions[i].x, gameState.applesPositions[i].y);
+		window.draw(gameState.applesShape[i]);
+	}
+
+	for (int i = 0; i < NUM_ROCKS; ++i)
+	{
+		gameState.rocksShape[i].setPosition(gameState.rocksPositions[i].x, gameState.rocksPositions[i].y);
+		window.draw(gameState.rocksShape[i]);
+	}
+
+}
+
+void DeinializeGame(GameState& gameState)
+{
+
+}
+
 int main()
 {
 	int seed = (int)time(nullptr);
@@ -39,59 +274,13 @@ int main()
 	// Init window
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game!");
 
-	// Init player state
-	Position2D playerPosition = { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f };
-	float playerSpeed = INITIAL_SPEED;
-	PlayerDirection playerDirection = PlayerDirection::Right; 
-
-	// Init player shape
-	sf::RectangleShape playerShape;
-	playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
-	playerShape.setFillColor(sf::Color::Red);
-	playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
-	playerShape.setPosition(playerPosition.x, playerPosition.y);
-
-	// Init apples
-	Position2D applesPositions[NUM_APPLES];
-	sf::CircleShape applesShape[NUM_APPLES];
-
-	for (int i = 0; i < NUM_APPLES; ++i)
-	{
-		applesPositions[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-		applesPositions[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
-		 
-		applesShape[i].setRadius(APPLE_SIZE / 2.f);
-		applesShape[i].setFillColor(sf::Color::Green);
-		applesShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
-		applesShape[i].setPosition(applesPositions[i].x, applesPositions[i].y);
-	}
-
-	int numEatenApples = 0;
-
-	// Init rocks
-	Position2D rocksPositions[NUM_ROCKS];
-	sf::RectangleShape rocksShape[NUM_ROCKS];
-	for (int i = 0; i < NUM_ROCKS; ++i)
-	{
-		rocksPositions[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-		rocksPositions[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
-
-		rocksShape[i].setSize(sf::Vector2f(ROCK_SIZE, ROCK_SIZE));
-		rocksShape[i].setFillColor(sf::Color::Yellow);
-		rocksShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
-		rocksShape[i].setPosition(rocksPositions[i].x, rocksPositions[i].y);
-	}
-
+	// Game initialization
+	GameState gameState;
+	InitGame(gameState);
+	
 	// Init game clocks
 	sf::Clock gameClock;
 	float lastTime = gameClock.getElapsedTime().asSeconds();
-
-	bool isGameFinished = false;
-	float gameFinishTime = lastTime;
-	sf::RectangleShape background;
-	background.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-	background.setFillColor(sf::Color::Black);
-	background.setPosition(0.f, 0.f);
 
 	// Main loop
 	while (window.isOpen())
@@ -117,156 +306,17 @@ int main()
 			}
 		}
 
-		if (!isGameFinished)
-		{
-			// Handle input
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			{
-				playerDirection = PlayerDirection::Right;
-			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-			{
-				playerDirection = PlayerDirection::Up;
-			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-			{
-				playerDirection = PlayerDirection::Left;
-			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-			{
-				playerDirection = PlayerDirection::Down;
-			}
+		UpdateGame(gameState, deltaTime);
 
-			// Update player state
-			switch (playerDirection)
-			{
-			case PlayerDirection::Right:
-			{
-				playerPosition.x += playerSpeed * deltaTime;
-				break;
-			}
-			case PlayerDirection::Up:
-			{
-				playerPosition.y -= playerSpeed * deltaTime;
-				break;
-			}
-			case PlayerDirection::Left:
-			{
-				playerPosition.x -= playerSpeed * deltaTime;
-				break;
-			}
-			case PlayerDirection::Down:
-			{
-				playerPosition.y += playerSpeed * deltaTime;
-				break;
-			}
-			}
-
-			// Find player collisions with apples
-			for (int i = 0; i < NUM_APPLES; ++i)
-			{
-				// Check collisions for squares
-				/*
-				float dx = fabs(playerPosition.x - applesPositions[i].x);
-				float dy = fabs(playerPosition.y - applesPositions[i].y);
-				if (dx <= (APPLE_SIZE + PLAYER_SIZE) / 2.f &&
-					dy <= (APPLE_SIZE + PLAYER_SIZE) / 2.f)
-				{
-					isAppleEaten[i] = true;
-					++numEatenApples;
-				}
-				*/
-
-				// Check collisions for circles
-				float squareDistance = (playerPosition.x - applesPositions[i].x) * (playerPosition.x - applesPositions[i].x) +
-					(playerPosition.y - applesPositions[i].y) * (playerPosition.y - applesPositions[i].y);
-				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
-				if (squareDistance <= squareRadiusSum)
-				{
-					applesPositions[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-					applesPositions[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
-					++numEatenApples;
-					playerSpeed += ACCELERATION;
-				}
-			}
-
-			// Find player collisions with rocks
-			for (int i = 0; i < NUM_ROCKS; ++i)
-			{
-				// Check collisions for squares
-				
-				float dx = fabs(playerPosition.x - rocksPositions[i].x);
-				float dy = fabs(playerPosition.y - rocksPositions[i].y);
-				if (dx <= (ROCK_SIZE + PLAYER_SIZE) / 2.f &&
-					dy <= (ROCK_SIZE + PLAYER_SIZE) / 2.f)
-				{
-					isGameFinished = true;
-					gameFinishTime = currentTime;
-				}
-			}
-
-			// Check screen borders collision
-			if (playerPosition.x - PLAYER_SIZE / 2.f < 0.f || playerPosition.x + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
-				playerPosition.y - PLAYER_SIZE / 2.f < 0.f || playerPosition.y + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
-			{
-				isGameFinished = true;
-				gameFinishTime = currentTime;
-			}
-		}
-		else
-		{
-			if (currentTime - gameFinishTime <= PAUSE_LENGTH)
-			{
-				background.setFillColor(sf::Color::Red);
-			}
-			else
-			{
-				// Reset backgound
-				background.setFillColor(sf::Color::Black);
-				
-				// Reset player
-				playerPosition.x = SCREEN_WIDTH / 2.f;
-				playerPosition.y = SCREEN_HEIGHT / 2.f;
-				playerSpeed = INITIAL_SPEED;
-				playerDirection = PlayerDirection::Right;
-
-				// Reset apples
-				for (int i = 0; i < NUM_APPLES; ++i)
-				{
-					applesPositions[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-					applesPositions[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
-				}
-
-				// Reset rocks
-				for (int i = 0; i < NUM_ROCKS; ++i)
-				{
-					rocksPositions[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-					rocksPositions[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
-				}
-
-				// Reset game state
-				numEatenApples = 0;
-				isGameFinished = false;
-			}
-		}
-
+		// Draw game
 		window.clear();
-		window.draw(background);
-		playerShape.setPosition(playerPosition.x, playerPosition.y);
-		for (int i = 0; i < NUM_APPLES; ++i)
-		{
-			applesShape[i].setPosition(applesPositions[i].x, applesPositions[i].y);
-			window.draw(applesShape[i]);
-		}
+		DrawGame(gameState, window);
 
-		for (int i = 0; i < NUM_ROCKS; ++i)
-		{
-			rocksShape[i].setPosition(rocksPositions[i].x, rocksPositions[i].y);
-			window.draw(rocksShape[i]);
-		}
-		window.draw(playerShape);
 		window.display();
 	}
+
+	// Deinitialization
+	DeinializeGame(gameState);
 
 	return 0;
 }

@@ -9,6 +9,7 @@
 
 int main()
 {
+	using namespace ApplesGame;
 	int seed = (int)time(nullptr);
 	srand(seed);
 	// Init window
@@ -25,6 +26,9 @@ int main()
 	// Main loop
 	while (window.isOpen())
 	{
+		// Reduce framerate to not spam CPU and GPU
+		sf::sleep(sf::milliseconds(16));
+
 		// Calculate time delta
 		float currentTime = gameClock.getElapsedTime().asSeconds();
 		float deltaTime = currentTime - lastTime;

@@ -3,10 +3,14 @@
 #include "Constants.h"
 #include "Math.h"
 
-struct Rock
+namespace ApplesGame
 {
-	Position2D position;
-	sf::RectangleShape shape;
-};
+	struct Rock
+	{
+		Position2D position;
+		sf::RectangleShape shape;
+	};
 
-void InitRock(Rock& rock);
+	void InitRock(Rock& rock);
+}
+

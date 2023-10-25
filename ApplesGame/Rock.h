@@ -5,12 +5,15 @@
 
 namespace ApplesGame
 {
+	struct Game;
+
 	struct Rock
 	{
 		Position2D position;
-		sf::RectangleShape shape;
+		sf::Sprite sprite;
 	};
 
-	void InitRock(Rock& rock);
+	void InitRock(Rock& rock, const Game& game);
+	void DrawRock(Rock& rock, sf::RenderWindow& window);
 }
 

@@ -29,10 +29,15 @@ namespace ApplesGame
 		assert(game.playerTexture.loadFromFile(RESOURCES_PATH + "\\Player.png"));
 		assert(game.appleTexture.loadFromFile(RESOURCES_PATH + "\\Apple.png"));
 		assert(game.rockTexture.loadFromFile(RESOURCES_PATH + "\\Rock.png"));
+		assert(game.eatAppleSoundBuffer.loadFromFile(RESOURCES_PATH + "\\AppleEat.wav"));
+		assert(game.gameOverSoundBuffer.loadFromFile(RESOURCES_PATH + "\\Death.wav"));
 
 		game.background.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 		game.background.setFillColor(sf::Color::Black);
 		game.background.setPosition(0.f, 0.f);
+
+		game.eatAppleSound.setBuffer(game.eatAppleSoundBuffer);
+		game.gameOverSound.setBuffer(game.gameOverSoundBuffer);
 
 		RestartGame(game);
 	}
@@ -94,6 +99,7 @@ namespace ApplesGame
 					game.apples[i].position = GetRandomPositionInScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 					++game.numEatenApples;
 					game.player.speed += ACCELERATION;
+					game.eatAppleSound.play();
 				}
 			}
 
@@ -105,6 +111,7 @@ namespace ApplesGame
 				{
 					game.isGameFinished = true;
 					game.timeSinceGameFinish = 0.f;
+					game.gameOverSound.play();
 				}
 			}
 
@@ -114,6 +121,7 @@ namespace ApplesGame
 			{
 				game.isGameFinished = true;
 				game.timeSinceGameFinish = 0.f;
+				game.gameOverSound.play();
 			}
 		}
 		else

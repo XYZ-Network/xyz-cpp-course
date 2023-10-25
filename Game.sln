@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TemperatureConversioin", "T
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PolishCalc", "PolishCalc\PolishCalc.vcxproj", "{251313FA-0DF9-4999-9BE0-1816E99C3DEB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BallsManager", "BallsManager\BallsManager.vcxproj", "{DEBD6283-7EA3-4625-8FB6-782BB982CAF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,14 @@ Global
 		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Release|x64.Build.0 = Release|x64
 		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Release|x86.ActiveCfg = Release|Win32
 		{251313FA-0DF9-4999-9BE0-1816E99C3DEB}.Release|x86.Build.0 = Release|Win32
+		{DEBD6283-7EA3-4625-8FB6-782BB982CAF7}.Debug|x64.ActiveCfg = Debug|x64
+		{DEBD6283-7EA3-4625-8FB6-782BB982CAF7}.Debug|x64.Build.0 = Debug|x64
+		{DEBD6283-7EA3-4625-8FB6-782BB982CAF7}.Debug|x86.ActiveCfg = Debug|Win32
+		{DEBD6283-7EA3-4625-8FB6-782BB982CAF7}.Debug|x86.Build.0 = Debug|Win32
+		{DEBD6283-7EA3-4625-8FB6-782BB982CAF7}.Release|x64.ActiveCfg = Release|x64
+		{DEBD6283-7EA3-4625-8FB6-782BB982CAF7}.Release|x64.Build.0 = Release|x64
+		{DEBD6283-7EA3-4625-8FB6-782BB982CAF7}.Release|x86.ActiveCfg = Release|Win32
+		{DEBD6283-7EA3-4625-8FB6-782BB982CAF7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

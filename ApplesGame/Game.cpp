@@ -5,18 +5,20 @@ namespace ApplesGame
 {
 	void RestartGame(Game& game)
 	{
-		InitPlayer(game.player, game);
+		SetPlayerPosition(game.player, { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f });
+		SetPlayerSpeed(game.player, INITIAL_SPEED);
+		SetPlayerDirection(game.player, PlayerDirection::Right);
 
 		// Init apples
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
-			InitApple(game.apples[i], game);
+			SetApplePosition(game.apples[i], GetRandomPositionInRectangle(game.screenRect));
 		}
 
 		// Init rocks
 		for (int i = 0; i < NUM_ROCKS; ++i)
 		{
-			InitRock(game.rocks[i], game);
+			SetRockPosition(game.rocks[i], GetRandomPositionInRectangle(game.screenRect));
 		}
 
 		game.numEatenApples = 0;
@@ -32,7 +34,23 @@ namespace ApplesGame
 		assert(game.eatAppleSoundBuffer.loadFromFile(RESOURCES_PATH + "\\AppleEat.wav"));
 		assert(game.gameOverSoundBuffer.loadFromFile(RESOURCES_PATH + "\\Death.wav"));
 
-		game.background.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+		game.screenRect = { 0.f, 0.f, SCREEN_WIDTH, SCREEN_HEIGHT };
+
+		InitPlayer(game.player, game);
+
+		// Init apples
+		for (int i = 0; i < NUM_APPLES; ++i)
+		{
+			InitApple(game.apples[i], game);
+		}
+
+		// Init rocks
+		for (int i = 0; i < NUM_ROCKS; ++i)
+		{
+			InitRock(game.rocks[i], game);
+		}
+
+		game.background.setSize(sf::Vector2f(game.screenRect.size.x, game.screenRect.size.y));
 		game.background.setFillColor(sf::Color::Black);
 		game.background.setPosition(0.f, 0.f);
 
@@ -50,55 +68,31 @@ namespace ApplesGame
 			// Handle input
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 			{
-				game.player.direction = PlayerDirection::Right;
+				SetPlayerDirection(game.player, PlayerDirection::Right);
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 			{
-				game.player.direction = PlayerDirection::Up;
+				SetPlayerDirection(game.player, PlayerDirection::Up);
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 			{
-				game.player.direction = PlayerDirection::Left;
+				SetPlayerDirection(game.player, PlayerDirection::Left);
 			}
 			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 			{
-				game.player.direction = PlayerDirection::Down;
+				SetPlayerDirection(game.player, PlayerDirection::Down);
 			}
 
-			// Update player state
-			switch (game.player.direction)
-			{
-			case PlayerDirection::Right:
-			{
-				game.player.position.x += game.player.speed * deltaTime;
-				break;
-			}
-			case PlayerDirection::Up:
-			{
-				game.player.position.y -= game.player.speed * deltaTime;
-				break;
-			}
-			case PlayerDirection::Left:
-			{
-				game.player.position.x -= game.player.speed * deltaTime;
-				break;
-			}
-			case PlayerDirection::Down:
-			{
-				game.player.position.y += game.player.speed * deltaTime;
-				break;
-			}
-			}
+			UpdatePlayer(game.player, deltaTime);
 
 			// Find player collisions with apples
 			for (int i = 0; i < NUM_APPLES; ++i)
 			{
-				if (IsCirclesCollide(game.player.position, PLAYER_SIZE / 2.f,
-					game.apples[i].position, APPLE_SIZE / 2.f))
+				if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(game.apples[i])))
 				{
-					game.apples[i].position = GetRandomPositionInScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
+					SetApplePosition(game.apples[i], GetRandomPositionInRectangle(game.screenRect));
 					++game.numEatenApples;
-					game.player.speed += ACCELERATION;
+					SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
 					game.eatAppleSound.play();
 				}
 			}
@@ -106,8 +100,7 @@ namespace ApplesGame
 			// Find player collisions with rocks
 			for (int i = 0; i < NUM_ROCKS; ++i)
 			{
-				if (IsRectanglesCollide(game.player.position, { PLAYER_SIZE, PLAYER_SIZE },
-					game.rocks[i].position, { ROCK_SIZE, ROCK_SIZE }))
+				if (DoShapesCollide(GetPlayerCollider(game.player), GetRockCollider(game.rocks[i])))
 				{
 					game.isGameFinished = true;
 					game.timeSinceGameFinish = 0.f;
@@ -116,8 +109,7 @@ namespace ApplesGame
 			}
 
 			// Check screen borders collision
-			if (game.player.position.x - PLAYER_SIZE / 2.f < 0.f || game.player.position.x + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
-				game.player.position.y - PLAYER_SIZE / 2.f < 0.f || game.player.position.y + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
+			if (!DoShapesCollide(GetPlayerCollider(game.player), game.screenRect))
 			{
 				game.isGameFinished = true;
 				game.timeSinceGameFinish = 0.f;

@@ -11,6 +11,8 @@ namespace ApplesGame
 {
 	struct Game
 	{
+		Rectangle screenRect;
+		
 		Player player;
 		Apple apples[NUM_APPLES];
 		Rock rocks[NUM_ROCKS];

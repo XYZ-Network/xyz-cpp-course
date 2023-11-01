@@ -15,13 +15,24 @@ namespace ApplesGame
 
 	typedef Vector2D Position2D;
 
-	Position2D GetRandomPositionInScreen(float screenWidth, float screenHeight);
+	struct Rectangle
+	{
+		Position2D position;
+		Vector2D size;
+	};
 
-	bool IsRectanglesCollide(Position2D rect1Position, Vector2D rect1Size,
-		Position2D rect2Position, Vector2D rect2Size);
+	struct Circle
+	{
+		Position2D position;
+		float radius;
+	};
 
-	bool IsCirclesCollide(Position2D circle1Position, float circle1Radius,
-		Position2D circle2Position, float circle2Radius);
+	bool DoShapesCollide(const Rectangle& rect1, const Rectangle& rect2);
+	bool DoShapesCollide(const Circle& circle1, const Circle& circle2);
+	bool DoShapesCollide(const Rectangle& rect, const Circle& circle);
+
+
+	Position2D GetRandomPositionInRectangle(const Rectangle& rect);
 
 	void SetSpriteSize(sf::Sprite& sprite, float desiredWidth, float desiredHeight);
 	void SetSpriteRelativeOrigin(sf::Sprite& sprite, float originX, float originY);

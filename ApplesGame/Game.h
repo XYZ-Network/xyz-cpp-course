@@ -33,6 +33,13 @@ namespace ApplesGame
 		sf::Sound eatAppleSound;
 		sf::Sound gameOverSound;
 		sf::RectangleShape background;
+
+		// Texts and fonts
+		sf::Font font;
+		sf::Text scoreText;
+		sf::Text controlsHintText;
+		sf::Text gameOverText;
+		sf::Text gameOverScoreText;
 	};
 
 	void InitGame(Game& game);

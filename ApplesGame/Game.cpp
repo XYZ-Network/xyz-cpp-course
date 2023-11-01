@@ -3,7 +3,7 @@
 
 namespace ApplesGame
 {
-	void RestartGame(Game& game)
+	void StartPlayingState(Game& game)
 	{
 		SetPlayerPosition(game.player, { SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f });
 		SetPlayerSpeed(game.player, INITIAL_SPEED);
@@ -24,6 +24,79 @@ namespace ApplesGame
 		game.numEatenApples = 0;
 		game.isGameFinished = false;
 		game.timeSinceGameFinish = 0;
+	}
+
+	void UpdatePlayingState(Game& game, float deltaTime)
+	{
+		// Handle input
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			SetPlayerDirection(game.player, PlayerDirection::Right);
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{
+			SetPlayerDirection(game.player, PlayerDirection::Up);
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			SetPlayerDirection(game.player, PlayerDirection::Left);
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			SetPlayerDirection(game.player, PlayerDirection::Down);
+		}
+
+		UpdatePlayer(game.player, deltaTime);
+
+		// Find player collisions with apples
+		for (int i = 0; i < NUM_APPLES; ++i)
+		{
+			if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(game.apples[i])))
+			{
+				SetApplePosition(game.apples[i], GetRandomPositionInRectangle(game.screenRect));
+				++game.numEatenApples;
+				SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
+				game.eatAppleSound.play();
+			}
+		}
+
+		// Find player collisions with rocks
+		for (int i = 0; i < NUM_ROCKS; ++i)
+		{
+			if (DoShapesCollide(GetPlayerCollider(game.player), GetRockCollider(game.rocks[i])))
+			{
+				StartGameoverState(game);
+			}
+		}
+
+		// Check screen borders collision
+		if (!DoShapesCollide(GetPlayerCollider(game.player), game.screenRect))
+		{
+			StartGameoverState(game);
+		}
+	}
+
+	void StartGameoverState(Game& game)
+	{
+		game.isGameFinished = true;
+		game.timeSinceGameFinish = 0.f;
+		game.gameOverSound.play();
+	}
+
+	void UpdateGameoverState(Game& game, float deltaTime)
+	{
+		if (game.timeSinceGameFinish <= PAUSE_LENGTH)
+		{
+			game.timeSinceGameFinish += deltaTime;
+			game.background.setFillColor(sf::Color::Red);
+		}
+		else
+		{
+			// Reset backgound
+			game.background.setFillColor(sf::Color::Black);
+
+			StartPlayingState(game);
+		}
 	}
 
 	void InitGame(Game& game)
@@ -57,7 +130,7 @@ namespace ApplesGame
 		game.eatAppleSound.setBuffer(game.eatAppleSoundBuffer);
 		game.gameOverSound.setBuffer(game.gameOverSoundBuffer);
 
-		RestartGame(game);
+		StartPlayingState(game);
 	}
 
 	void UpdateGame(Game& game, float deltaTime)
@@ -65,71 +138,11 @@ namespace ApplesGame
 		// Update game state
 		if (!game.isGameFinished)
 		{
-			// Handle input
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			{
-				SetPlayerDirection(game.player, PlayerDirection::Right);
-			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-			{
-				SetPlayerDirection(game.player, PlayerDirection::Up);
-			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-			{
-				SetPlayerDirection(game.player, PlayerDirection::Left);
-			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-			{
-				SetPlayerDirection(game.player, PlayerDirection::Down);
-			}
-
-			UpdatePlayer(game.player, deltaTime);
-
-			// Find player collisions with apples
-			for (int i = 0; i < NUM_APPLES; ++i)
-			{
-				if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(game.apples[i])))
-				{
-					SetApplePosition(game.apples[i], GetRandomPositionInRectangle(game.screenRect));
-					++game.numEatenApples;
-					SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
-					game.eatAppleSound.play();
-				}
-			}
-
-			// Find player collisions with rocks
-			for (int i = 0; i < NUM_ROCKS; ++i)
-			{
-				if (DoShapesCollide(GetPlayerCollider(game.player), GetRockCollider(game.rocks[i])))
-				{
-					game.isGameFinished = true;
-					game.timeSinceGameFinish = 0.f;
-					game.gameOverSound.play();
-				}
-			}
-
-			// Check screen borders collision
-			if (!DoShapesCollide(GetPlayerCollider(game.player), game.screenRect))
-			{
-				game.isGameFinished = true;
-				game.timeSinceGameFinish = 0.f;
-				game.gameOverSound.play();
-			}
+			UpdatePlayingState(game, deltaTime);
 		}
 		else
 		{
-			if (game.timeSinceGameFinish <= PAUSE_LENGTH)
-			{
-				game.timeSinceGameFinish += deltaTime;
-				game.background.setFillColor(sf::Color::Red);
-			}
-			else
-			{
-				// Reset backgound
-				game.background.setFillColor(sf::Color::Black);
-
-				RestartGame(game);
-			}
+			UpdateGameoverState(game, deltaTime);
 		}
 	}
 

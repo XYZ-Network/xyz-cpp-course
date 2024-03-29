@@ -40,6 +40,9 @@
     <ClCompile Include="Snake.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -70,5 +73,6 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Snake.h" />
+    <ClInclude Include="Application.h" />
   </ItemGroup>
 </Project>

@@ -69,9 +69,9 @@ namespace SnakeGame
 	// Remove all game states from the stack and add new one
 	void SwitchGameState(Game& game, GameStateType newState);
 
-	void InitGameState(Game& game, GameState& state);
-	void ShutdownGameState(Game& game, GameState& state);
-	void HandleWindowEventGameState(Game& game, GameState& state, sf::Event& event);
-	void UpdateGameState(Game& game, GameState& state, float timeDelta);
-	void DrawGameState(Game& game, GameState& state, sf::RenderWindow& window);
+	void InitGameState(GameState& state);
+	void ShutdownGameState(GameState& state);
+	void HandleWindowEventGameState(GameState& state, sf::Event& event);
+	void UpdateGameState(GameState& state, float timeDelta);
+	void DrawGameState(GameState& state, sf::RenderWindow& window);
 }

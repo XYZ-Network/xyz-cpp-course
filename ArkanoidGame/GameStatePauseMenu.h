@@ -18,9 +18,9 @@ namespace SnakeGame
 		MenuItem exitItem;
 	};
 
-	void InitGameStatePauseMenu(GameStatePauseMenuData& data, Game& game);
-	void ShutdownGameStatePauseMenu(GameStatePauseMenuData& data, Game& game);
-	void HandleGameStatePauseMenuWindowEvent(GameStatePauseMenuData& data, Game& game, const sf::Event& event);
-	void UpdateGameStatePauseMenu(GameStatePauseMenuData& data, Game& game, float timeDelta);
-	void DrawGameStatePauseMenu(GameStatePauseMenuData& data, Game& game, sf::RenderWindow& window);
+	void InitGameStatePauseMenu(GameStatePauseMenuData& data);
+	void ShutdownGameStatePauseMenu(GameStatePauseMenuData& data);
+	void HandleGameStatePauseMenuWindowEvent(GameStatePauseMenuData& data, const sf::Event& event);
+	void UpdateGameStatePauseMenu(GameStatePauseMenuData& data, float timeDelta);
+	void DrawGameStatePauseMenu(GameStatePauseMenuData& data, sf::RenderWindow& window);
 }

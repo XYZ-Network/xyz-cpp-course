@@ -24,5 +24,7 @@ namespace SnakeGame
 	const unsigned int ROCKS_COUNT = 20;
 
 	const int MAX_RECORDS_TABLE_SIZE = 5;
-	extern const char* PLAYER_NAME; // We need to define this constant in some SPP
+	extern const char* PLAYER_NAME; // We need to define this constant in some CPP
+
+	const std::string GAME_NAME = "SnakeGame";
 }

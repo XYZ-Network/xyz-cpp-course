@@ -20,9 +20,9 @@ namespace SnakeGame
 	};
 
 	// Returns pointer to the allocated data
-	void InitGameStateGameOver(GameStateGameOverData& data, Game& game);
-	void ShutdownGameStateGameOver(GameStateGameOverData& data, Game& game);
-	void HandleGameStateGameOverWindowEvent(GameStateGameOverData& data, Game& game, const sf::Event& event);
-	void UpdateGameStateGameOver(GameStateGameOverData& data, Game& game, float timeDelta);
-	void DrawGameStateGameOver(GameStateGameOverData& data, Game& game, sf::RenderWindow& window);
+	void InitGameStateGameOver(GameStateGameOverData& data);
+	void ShutdownGameStateGameOver(GameStateGameOverData& data);
+	void HandleGameStateGameOverWindowEvent(GameStateGameOverData& data, const sf::Event& event);
+	void UpdateGameStateGameOver(GameStateGameOverData& data, float timeDelta);
+	void DrawGameStateGameOver(GameStateGameOverData& data, sf::RenderWindow& window);
 }

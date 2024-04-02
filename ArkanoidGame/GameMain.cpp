@@ -9,8 +9,7 @@ using namespace SnakeGame;
 
 int main()
 {
-	Application app("SnakeGame");
-	app.Run();
+	Application::Instance().Run();
 
 	return 0;
 }

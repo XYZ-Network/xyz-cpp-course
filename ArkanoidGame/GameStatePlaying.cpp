@@ -1,4 +1,5 @@
 #include "GameStatePlaying.h"
+#include "Application.h"
 #include "Game.h"
 #include "Text.h"
 #include <assert.h>
@@ -6,7 +7,7 @@
 
 namespace SnakeGame
 {
-	void InitGameStatePlaying(GameStatePlayingData& data, Game& game)
+	void InitGameStatePlaying(GameStatePlayingData& data)
 	{	
 		// Init game resources (terminate if error)
 		LoadSnakeTextures(data.snake);
@@ -52,23 +53,23 @@ namespace SnakeGame
 		data.gameOverSound.setBuffer(data.gameOverSoundBuffer);
 	}
 
-	void ShutdownGameStatePlaying(GameStatePlayingData& data, Game& game)
+	void ShutdownGameStatePlaying(GameStatePlayingData& data)
 	{
 		// We dont need to free resources here, because they will be freed automatically
 	}
 
-	void HandleGameStatePlayingWindowEvent(GameStatePlayingData& data, Game& game, const sf::Event& event)
+	void HandleGameStatePlayingWindowEvent(GameStatePlayingData& data, const sf::Event& event)
 	{
 		if (event.type == sf::Event::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Escape)
 			{
-				PushGameState(game, GameStateType::ExitDialog, false);
+				PushGameState(Application::Instance().GetGame(), GameStateType::ExitDialog, false);
 			}
 		}
 	}
 
-	void UpdateGameStatePlaying(GameStatePlayingData& data, Game& game, float timeDelta)
+	void UpdateGameStatePlaying(GameStatePlayingData& data, float timeDelta)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		{
@@ -90,6 +91,7 @@ namespace SnakeGame
 		// Update snake
 		MoveSnake(data.snake, timeDelta);
 
+		Game& game = Application::Instance().GetGame();
 		if (CheckSpriteIntersection(*data.snake.head, data.apple)) {
 			data.eatAppleSound.play();
 
@@ -125,7 +127,7 @@ namespace SnakeGame
 		data.scoreText.setString("Apples eaten: " + std::to_string(data.numEatenApples));
 	}
 
-	void DrawGameStatePlaying(GameStatePlayingData& data, Game& game, sf::RenderWindow& window)
+	void DrawGameStatePlaying(GameStatePlayingData& data, sf::RenderWindow& window)
 	{
 		// Draw background
 		window.draw(data.background);

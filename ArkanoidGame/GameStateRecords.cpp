@@ -1,4 +1,5 @@
 #include "GameStateRecords.h"
+#include "Application.h"
 #include "Text.h"
 #include "Game.h"
 #include "GameSettings.h"
@@ -7,7 +8,7 @@
 
 namespace SnakeGame
 {
-	void InitGameStateRecords(GameStateRecordsData& data, Game& game)
+	void InitGameStateRecords(GameStateRecordsData& data)
 	{
 		assert(data.font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
@@ -18,6 +19,7 @@ namespace SnakeGame
 
 		data.tableTexts.reserve(MAX_RECORDS_TABLE_SIZE);
 
+		Game& game = Application::Instance().GetGame();
 		std::map<int, std::string> sortedRecordsTable;
 		for (const auto& item : game.recordsTable)
 		{
@@ -45,28 +47,28 @@ namespace SnakeGame
 		data.hintText.setCharacterSize(24);
 	}
 
-	void ShutdownGameStateRecords(GameStateRecordsData& data, Game& game)
+	void ShutdownGameStateRecords(GameStateRecordsData& data)
 	{
 		// Nothing to clear here
 	}
 
-	void HandleGameStateRecordsWindowEvent(GameStateRecordsData& data, Game& game, const sf::Event& event)
+	void HandleGameStateRecordsWindowEvent(GameStateRecordsData& data, const sf::Event& event)
 	{
 		if (event.type == sf::Event::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Escape)
 			{
-				PopGameState(game);
+				PopGameState(Application::Instance().GetGame());
 			}
 		}
 	}
 
-	void UpdateGameStateRecords(GameStateRecordsData& data, Game& game, float timeDelta)
+	void UpdateGameStateRecords(GameStateRecordsData& data, float timeDelta)
 	{
 
 	}
 
-	void DrawGameStateRecords(GameStateRecordsData& data, Game& game, sf::RenderWindow& window)
+	void DrawGameStateRecords(GameStateRecordsData& data, sf::RenderWindow& window)
 	{
 		sf::Vector2f viewSize = window.getView().getSize();
 

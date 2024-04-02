@@ -1,10 +1,11 @@
 #include "GameStatePauseMenu.h"
+#include "Application.h"
 #include "Game.h"
 #include <assert.h>
 
 namespace SnakeGame
 {
-	void InitGameStatePauseMenu(GameStatePauseMenuData& data, Game& game)
+	void InitGameStatePauseMenu(GameStatePauseMenuData& data)
 	{
 		assert(data.font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
@@ -32,13 +33,14 @@ namespace SnakeGame
 		SelectMenuItem(data.menu, &data.resumeItem);
 	}
 
-	void ShutdownGameStatePauseMenu(GameStatePauseMenuData& data, Game& game)
+	void ShutdownGameStatePauseMenu(GameStatePauseMenuData& data)
 	{
 		// We dont need to free resources here, because they will be freed automatically
 	}
 
-	void HandleGameStatePauseMenuWindowEvent(GameStatePauseMenuData& data, Game& game, const sf::Event& event)
+	void HandleGameStatePauseMenuWindowEvent(GameStatePauseMenuData& data, const sf::Event& event)
 	{
+		Game& game = Application::Instance().GetGame();
 		if (event.type == sf::Event::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Escape)
@@ -75,12 +77,12 @@ namespace SnakeGame
 		}
 	}
 
-	void UpdateGameStatePauseMenu(GameStatePauseMenuData& data, Game& game, float timeDelta)
+	void UpdateGameStatePauseMenu(GameStatePauseMenuData& data, float timeDelta)
 	{
 
 	}
 
-	void DrawGameStatePauseMenu(GameStatePauseMenuData& data, Game& game, sf::RenderWindow& window)
+	void DrawGameStatePauseMenu(GameStatePauseMenuData& data, sf::RenderWindow& window)
 	{
 		sf::Vector2f viewSize = (sf::Vector2f)window.getView().getSize();
 		

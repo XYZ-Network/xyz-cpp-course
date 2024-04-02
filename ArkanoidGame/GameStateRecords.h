@@ -16,9 +16,9 @@ namespace SnakeGame
 		sf::Text hintText;
 	};
 
-	void InitGameStateRecords(GameStateRecordsData& data, Game& game);
-	void ShutdownGameStateRecords(GameStateRecordsData& data, Game& game);
-	void HandleGameStateRecordsWindowEvent(GameStateRecordsData& data, Game& game, const sf::Event& event);
-	void UpdateGameStateRecords(GameStateRecordsData& data, Game& game, float timeDelta);
-	void DrawGameStateRecords(GameStateRecordsData& data, Game& game, sf::RenderWindow& window);
+	void InitGameStateRecords(GameStateRecordsData& data);
+	void ShutdownGameStateRecords(GameStateRecordsData& data);
+	void HandleGameStateRecordsWindowEvent(GameStateRecordsData& data, const sf::Event& event);
+	void UpdateGameStateRecords(GameStateRecordsData& data, float timeDelta);
+	void DrawGameStateRecords(GameStateRecordsData& data, sf::RenderWindow& window);
 }

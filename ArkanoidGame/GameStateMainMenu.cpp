@@ -1,10 +1,11 @@
 #include "GameStateMainMenu.h"
+#include "Application.h"
 #include "Game.h"
 #include <assert.h>
 
 namespace SnakeGame
 {
-	void InitGameStateMainMenu(GameStateMainMenuData& data, Game& game)
+	void InitGameStateMainMenu(GameStateMainMenuData& data)
 	{
 		assert(data.font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
@@ -74,18 +75,19 @@ namespace SnakeGame
 		SelectMenuItem(data.menu, &data.startGameItem);
 	}
 
-	void ShutdownGameStateMainMenu(GameStateMainMenuData& data, Game& game)
+	void ShutdownGameStateMainMenu(GameStateMainMenuData& data)
 	{
 		// No need to do anything here
 	}
 
-	void HandleGameStateMainMenuWindowEvent(GameStateMainMenuData& data, Game& game, const sf::Event& event)
+	void HandleGameStateMainMenuWindowEvent(GameStateMainMenuData& data, const sf::Event& event)
 	{
 		if (!data.menu.selectedItem)
 		{
 			return;
 		}
 
+		Game& game = Application::Instance().GetGame();
 		if (event.type == sf::Event::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Escape)
@@ -146,8 +148,9 @@ namespace SnakeGame
 		}
 	}
 
-	void UpdateGameStateMainMenu(GameStateMainMenuData& data, Game& game, float timeDelta)
+	void UpdateGameStateMainMenu(GameStateMainMenuData& data, float timeDelta)
 	{
+		Game& game = Application::Instance().GetGame();
 		bool isInfiniteApples = ((std::uint8_t)game.options & (std::uint8_t)GameOptions::InfiniteApples) != (std::uint8_t)GameOptions::Empty;
 		data.optionsInfiniteApplesItem.text.setString("Infinite Apples: " + std::string(isInfiniteApples ? "On" : "Off"));
 
@@ -155,7 +158,7 @@ namespace SnakeGame
 		data.optionsWithAccelerationItem.text.setString("With Acceleration: " + std::string(isWithAcceleration ? "On" : "Off"));
 	}
 
-	void DrawGameStateMainMenu(GameStateMainMenuData& data, Game& game, sf::RenderWindow& window)
+	void DrawGameStateMainMenu(GameStateMainMenuData& data, sf::RenderWindow& window)
 	{
 		sf::Vector2f viewSize = (sf::Vector2f)window.getView().getSize();
 

@@ -329,4 +329,9 @@ namespace SnakeGame
 		}
 	}
 
+	bool IsEnableOptions(const Game& game, GameOptions option)
+	{
+		bool isEnable = ((std::uint8_t)game.options & (std::uint8_t)option) != (std::uint8_t)GameOptions::Empty;
+		return isEnable;
+	}
 }

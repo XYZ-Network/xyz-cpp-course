@@ -74,4 +74,5 @@ namespace SnakeGame
 	void HandleWindowEventGameState(GameState& state, sf::Event& event);
 	void UpdateGameState(GameState& state, float timeDelta);
 	void DrawGameState(GameState& state, sf::RenderWindow& window);
+	bool IsEnableOptions(const Game& game, GameOptions option);
 }

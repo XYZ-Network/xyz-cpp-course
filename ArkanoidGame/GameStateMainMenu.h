@@ -9,15 +9,6 @@ namespace SnakeGame
 	struct GameStateMainMenuData
 	{
 		sf::Font font;
-
-		MenuItem startGameItem;
-		MenuItem optionsItem;
-		MenuItem optionsInfiniteApplesItem;
-		MenuItem optionsWithAccelerationItem;
-		MenuItem recordsItem;
-		MenuItem exitGameItem;
-		MenuItem yesItem;
-		MenuItem noItem;
 		Menu menu;
 	};
 

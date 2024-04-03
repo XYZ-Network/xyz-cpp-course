@@ -14,8 +14,6 @@ namespace SnakeGame
 		sf::Text titleText;
 
 		Menu menu;
-		MenuItem resumeItem;
-		MenuItem exitItem;
 	};
 
 	void InitGameStatePauseMenu(GameStatePauseMenuData& data);

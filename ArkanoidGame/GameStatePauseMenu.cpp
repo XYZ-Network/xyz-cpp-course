@@ -16,21 +16,29 @@ namespace SnakeGame
 		data.titleText.setCharacterSize(48);
 		data.titleText.setFillColor(sf::Color::Red);
 
-		data.menu.rootItem.childrenOrientation = Orientation::Vertical;
-		data.menu.rootItem.childrenAlignment = Alignment::Middle;
-		data.menu.rootItem.children.push_back(&data.resumeItem);
-		data.menu.rootItem.children.push_back(&data.exitItem);
-		
-		data.resumeItem.text.setString("Return to game");
-		data.resumeItem.text.setFont(data.font);
-		data.resumeItem.text.setCharacterSize(24);
+		MenuItem resumeItem;
+		resumeItem.text.setString("Return to game");
+		resumeItem.text.setFont(data.font);
+		resumeItem.text.setCharacterSize(24);
+		resumeItem.onPressCallback = [](MenuItem&) {
+			PopGameState(Application::Instance().GetGame());
+			};
 
-		data.exitItem.text.setString("Exit to main menu");
-		data.exitItem.text.setFont(data.font);
-		data.exitItem.text.setCharacterSize(24);
+		MenuItem exitItem;
+		exitItem.text.setString("Exit to main menu");
+		exitItem.text.setFont(data.font);
+		exitItem.text.setCharacterSize(24);
+		exitItem.onPressCallback = [](MenuItem&) {
+			SwitchGameState(Application::Instance().GetGame(), GameStateType::MainMenu);
+			};
 
-		InitMenuItem(data.menu.rootItem);
-		SelectMenuItem(data.menu, &data.resumeItem);
+		MenuItem pauseMenu;
+		pauseMenu.childrenOrientation = Orientation::Vertical;
+		pauseMenu.childrenAlignment = Alignment::Middle;
+		pauseMenu.childrens.push_back(resumeItem);
+		pauseMenu.childrens.push_back(exitItem);
+
+		data.menu.Init(pauseMenu);
 	}
 
 	void ShutdownGameStatePauseMenu(GameStatePauseMenuData& data)
@@ -48,31 +56,19 @@ namespace SnakeGame
 				PopGameState(game);
 			}
 
-			if (data.menu.selectedItem == nullptr)
-			{
-				return;
-			}
-
 			if (event.key.code == sf::Keyboard::Enter)
 			{
-				if (data.menu.selectedItem == &data.resumeItem)
-				{
-					PopGameState(game);
-				}
-				else if (data.menu.selectedItem == &data.exitItem)
-				{
-					SwitchGameState(game, GameStateType::MainMenu);
-				}
+				data.menu.PressOnSelectedItem();
 			}
 
-			Orientation orientation = data.menu.selectedItem->parent->childrenOrientation;
+			Orientation orientation = data.menu.GetCurrentContext().childrenOrientation;
 			if (event.key.code == sf::Keyboard::Up)
 			{
-				SelectPreviousMenuItem(data.menu);
+				data.menu.SwitchToPreviousMenuItem();
 			}
 			else if (event.key.code == sf::Keyboard::Down)
 			{
-				SelectNextMenuItem(data.menu);
+				data.menu.SwitchToNextMenuItem();
 			}
 		}
 	}
@@ -93,7 +89,7 @@ namespace SnakeGame
 		data.titleText.setPosition(viewSize.x / 2.f, 100);
 		window.draw(data.titleText);
 
-		DrawMenu(data.menu, window, window.getView().getCenter(), { 0.5f, 0.f });
+		data.menu.Draw(window, window.getView().getCenter(), { 0.5f, 0.f });
 	}
 
 }

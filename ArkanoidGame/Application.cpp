@@ -15,13 +15,6 @@ namespace SnakeGame
 		// Init random number generator
 		unsigned int seed = (unsigned int)time(nullptr); // Get current time as seed. You can also use any other number to fix randomization
 		srand(seed);
-
-		InitGame(game);
-	}
-
-	Application::~Application()
-	{
-		ShutdownGame(game);
 	}
 
 	void Application::Run()
@@ -34,19 +27,19 @@ namespace SnakeGame
 
 			float startTime = gameClock.getElapsedTime().asSeconds();
 
-			HandleWindowEvents(game, window);
+			game.HandleWindowEvents(window);
 
 			if (!window.isOpen()) {
 				break;
 			}
 
-			if (UpdateGame(game, TIME_PER_FRAME))
+			if (game.Update(TIME_PER_FRAME))
 			{
 				// Draw everything here
 				// Clear the window first
 				window.clear();
 
-				DrawGame(game, window);
+				game.Draw(window);
 
 				// End the current frame, display window contents on screen
 				window.display();

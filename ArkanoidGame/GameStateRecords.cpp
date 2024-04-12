@@ -19,9 +19,9 @@ namespace SnakeGame
 
 		data.tableTexts.reserve(MAX_RECORDS_TABLE_SIZE);
 
-		Game& game = Application::Instance().GetGame();
+		const Game& game = Application::Instance().GetGame();
 		std::map<int, std::string> sortedRecordsTable;
-		for (const auto& item : game.recordsTable)
+		for (const auto& item : game.GetRecordsTable())
 		{
 			sortedRecordsTable[item.second] = item.first;
 		}
@@ -58,7 +58,7 @@ namespace SnakeGame
 		{
 			if (event.key.code == sf::Keyboard::Escape)
 			{
-				PopGameState(Application::Instance().GetGame());
+				Application::Instance().GetGame().PopState();
 			}
 		}
 	}

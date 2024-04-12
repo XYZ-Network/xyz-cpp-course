@@ -4,7 +4,7 @@
 
 namespace SnakeGame
 {
-	struct Game;
+	class Game;
 
 	struct GameStateMainMenuData
 	{

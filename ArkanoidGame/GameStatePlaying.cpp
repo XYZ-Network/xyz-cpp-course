@@ -64,7 +64,7 @@ namespace SnakeGame
 		{
 			if (event.key.code == sf::Keyboard::Escape)
 			{
-				PushGameState(Application::Instance().GetGame(), GameStateType::ExitDialog, false);
+				Application::Instance().GetGame().PushState(GameStateType::ExitDialog, false);
 			}
 		}
 	}
@@ -91,7 +91,6 @@ namespace SnakeGame
 		// Update snake
 		MoveSnake(data.snake, timeDelta);
 
-		Game& game = Application::Instance().GetGame();
 		if (CheckSpriteIntersection(*data.snake.head, data.apple)) {
 			data.eatAppleSound.play();
 
@@ -104,12 +103,12 @@ namespace SnakeGame
 			SetSpriteRandomPosition(data.apple, data.background.getGlobalBounds(), data.snake.body);
 
 			// Increase snake speed
-			if ((std::uint8_t)game.options & (std::uint8_t)GameOptions::WithAcceleration) {
+			if (Application::Instance().GetGame().IsEnableOptions(GameOptions::WithAcceleration)) {
 				data.snake.speed += ACCELERATION;
 			}
 		}
 
-		bool isGameFinished = !((std::uint8_t)game.options & (std::uint8_t)GameOptions::InfiniteApples);
+		const bool isGameFinished = data.numEatenApples == MAX_APPLES && !Application::Instance().GetGame().IsEnableOptions(GameOptions::InfiniteApples);
 		
 		if (isGameFinished
 			|| !HasSnakeCollisionWithRect(data.snake, data.background.getGlobalBounds()) // Check collision with screen border
@@ -117,11 +116,12 @@ namespace SnakeGame
 			|| FullCheckCollisions(data.rocks.begin(), data.rocks.end(), *data.snake.head)) // Check collision with rocks
 		{
 			data.gameOverSound.play();
+			
+			Game& game = Application::Instance().GetGame();
 
 			// Find snake in records table and update his score
-			game.recordsTable[PLAYER_NAME] = std::max(game.recordsTable[PLAYER_NAME], data.numEatenApples);
-
-			PushGameState(game, GameStateType::GameOver, false);
+			game.UpdateRecord(PLAYER_NAME, data.numEatenApples);
+			game.PushState(GameStateType::GameOver, false);
 		}
 
 		data.scoreText.setString("Apples eaten: " + std::to_string(data.numEatenApples));

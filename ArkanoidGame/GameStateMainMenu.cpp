@@ -14,31 +14,31 @@ namespace SnakeGame
 		startGame.text.setFont(data.font);
 		startGame.text.setCharacterSize(24);
 		startGame.onPressCallback = [](MenuItem&) {
-			SwitchGameState(Application::Instance().GetGame(), GameStateType::Playing);
+			Application::Instance().GetGame().SwitchStateTo(GameStateType::Playing);
 			};
 		
-		bool isInfiniteApples = IsEnableOptions(Application::Instance().GetGame(), GameOptions::InfiniteApples);
+		const bool isInfiniteApples = Application::Instance().GetGame().IsEnableOptions(GameOptions::InfiniteApples);
 		MenuItem optionsInfiniteApplesItem;
 		optionsInfiniteApplesItem.text.setString("Infinite Apples: " + std::string(isInfiniteApples ? "On" : "Off"));
 		optionsInfiniteApplesItem.text.setFont(data.font);
 		optionsInfiniteApplesItem.text.setCharacterSize(24);
 		optionsInfiniteApplesItem.onPressCallback = [](MenuItem& item) {
 			Game& game = Application::Instance().GetGame();
-			game.options = (GameOptions)((std::uint8_t)game.options ^ (std::uint8_t)GameOptions::InfiniteApples);
-			bool isInfiniteApples = IsEnableOptions(game, GameOptions::InfiniteApples);
-			item.text.setString("Infinite Apples: " + std::string(isInfiniteApples ? "On" : "Off"));
+			bool newOptionValue = !game.IsEnableOptions(GameOptions::InfiniteApples);
+			game.SetOption(GameOptions::InfiniteApples, newOptionValue);
+			item.text.setString("Infinite Apples: " + std::string(newOptionValue ? "On" : "Off"));
 			};
 
-		bool isWithAcceleration = IsEnableOptions(Application::Instance().GetGame(), GameOptions::WithAcceleration);
+		const bool isWithAcceleration = Application::Instance().GetGame().IsEnableOptions(GameOptions::WithAcceleration);
 		MenuItem optionsWithAccelerationItem;
 		optionsWithAccelerationItem.text.setString("With Acceleration: " + std::string(isWithAcceleration ? "On" : "Off"));
 		optionsWithAccelerationItem.text.setFont(data.font);
 		optionsWithAccelerationItem.text.setCharacterSize(24);
 		optionsWithAccelerationItem.onPressCallback = [](MenuItem& item) {
 			Game& game = Application::Instance().GetGame();
-			game.options = (GameOptions)((std::uint8_t)game.options ^ (std::uint8_t)GameOptions::WithAcceleration);
-			bool isWithAcceleration = IsEnableOptions(game, GameOptions::WithAcceleration);
-			item.text.setString("With Acceleration: " + std::string(isWithAcceleration ? "On" : "Off"));
+			bool newOptionValue = !game.IsEnableOptions(GameOptions::WithAcceleration);
+			game.SetOption(GameOptions::WithAcceleration, newOptionValue);
+			item.text.setString("With Acceleration: " + std::string(newOptionValue ? "On" : "Off"));
 			};
 
 		MenuItem options;
@@ -60,7 +60,7 @@ namespace SnakeGame
 		recordsItem.text.setFont(data.font);
 		recordsItem.text.setCharacterSize(24);
 		recordsItem.onPressCallback = [](MenuItem&) {
-			PushGameState(Application::Instance().GetGame(), GameStateType::Records, true);
+			Application::Instance().GetGame().PushState(GameStateType::Records, true);
 			};
 
 		MenuItem yesItem;
@@ -68,7 +68,7 @@ namespace SnakeGame
 		yesItem.text.setFont(data.font);
 		yesItem.text.setCharacterSize(24);
 		yesItem.onPressCallback = [](MenuItem&) {
-			SwitchGameState(Application::Instance().GetGame(), GameStateType::None);
+			Application::Instance().GetGame().SwitchStateTo(GameStateType::None);
 			};
 
 		MenuItem noItem;
@@ -117,7 +117,6 @@ namespace SnakeGame
 
 	void HandleGameStateMainMenuWindowEvent(GameStateMainMenuData& data, const sf::Event& event)
 	{
-		Game& game = Application::Instance().GetGame();
 		if (event.type == sf::Event::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Escape)

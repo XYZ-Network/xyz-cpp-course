@@ -21,7 +21,7 @@ namespace SnakeGame
 		resumeItem.text.setFont(data.font);
 		resumeItem.text.setCharacterSize(24);
 		resumeItem.onPressCallback = [](MenuItem&) {
-			PopGameState(Application::Instance().GetGame());
+			Application::Instance().GetGame().PopState();
 			};
 
 		MenuItem exitItem;
@@ -29,7 +29,7 @@ namespace SnakeGame
 		exitItem.text.setFont(data.font);
 		exitItem.text.setCharacterSize(24);
 		exitItem.onPressCallback = [](MenuItem&) {
-			SwitchGameState(Application::Instance().GetGame(), GameStateType::MainMenu);
+			Application::Instance().GetGame().SwitchStateTo(GameStateType::MainMenu);
 			};
 
 		MenuItem pauseMenu;
@@ -48,12 +48,11 @@ namespace SnakeGame
 
 	void HandleGameStatePauseMenuWindowEvent(GameStatePauseMenuData& data, const sf::Event& event)
 	{
-		Game& game = Application::Instance().GetGame();
 		if (event.type == sf::Event::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Escape)
 			{
-				PopGameState(game);
+				Application::Instance().GetGame().PopState();
 			}
 
 			if (event.key.code == sf::Keyboard::Enter)

@@ -29,8 +29,7 @@ namespace SnakeGame
 
 		std::multimap<int, std::string> sortedRecordsTable;
 		Game& game = Application::Instance().GetGame();
-		int snakeScores = game.recordsTable[PLAYER_NAME];
-		for (const auto& item : game.recordsTable)
+		for (const auto& item : game.GetRecordsTable())
 		{
 			sortedRecordsTable.insert(std::make_pair(item.second, item.first));
 		}
@@ -64,6 +63,7 @@ namespace SnakeGame
 		{
 			sf::Text& text = data.recordsTableTexts.back();
 			std::stringstream sstream;
+			int snakeScores = game.GetRecordByPlayerId(PLAYER_NAME);
 			sstream << MAX_RECORDS_TABLE_SIZE << ". " << PLAYER_NAME << ": " << snakeScores;
 			text.setString(sstream.str());
 			text.setFillColor(sf::Color::Green);
@@ -86,11 +86,11 @@ namespace SnakeGame
 		{
 			if (event.key.code == sf::Keyboard::Space)
 			{
-				SwitchGameState(Application::Instance().GetGame(), GameStateType::Playing);
+				Application::Instance().GetGame().SwitchStateTo(GameStateType::Playing);
 			}
 			else if (event.key.code == sf::Keyboard::Escape)
 			{
-				SwitchGameState(Application::Instance().GetGame(), GameStateType::MainMenu);
+				Application::Instance().GetGame().SwitchStateTo(GameStateType::MainMenu);
 			}
 		}
 	}

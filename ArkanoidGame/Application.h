@@ -18,7 +18,7 @@ namespace SnakeGame {
 
 	private:
 		Application();
-		~Application();
+		~Application() = default;
 
 	private:
 		Game game;

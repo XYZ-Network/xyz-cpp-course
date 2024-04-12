@@ -3,7 +3,7 @@
 
 namespace SnakeGame
 {
-	struct Game;
+	class Game;
 
 	struct GameStateGameOverData
 	{

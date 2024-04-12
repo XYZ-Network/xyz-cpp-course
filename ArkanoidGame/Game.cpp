@@ -9,10 +9,10 @@
 
 namespace SnakeGame
 {
-	void InitGame(Game& game)
+	Game::Game()
 	{
 		// Generate fake records table
-		game.recordsTable =
+		recordsTable =
 		{
 			{"John", MAX_APPLES / 2},
 			{"Jane", MAX_APPLES / 3 },
@@ -21,13 +21,18 @@ namespace SnakeGame
 			{"Clementine", MAX_APPLES / 5 },
 		};
 
-		game.gameStateChangeType = GameStateChangeType::None;
-		game.pendingGameStateType = GameStateType::None;
-		game.pendingGameStateIsExclusivelyVisible = false;
-		SwitchGameState(game, GameStateType::MainMenu);
+		stateChangeType = GameStateChangeType::None;
+		pendingGameStateType = GameStateType::None;
+		pendingGameStateIsExclusivelyVisible = false;
+		SwitchStateTo(GameStateType::MainMenu);
 	}
 
-	void HandleWindowEvents(Game& game, sf::RenderWindow& window)
+	Game::~Game()
+	{
+		Shutdown();
+	}
+
+	void Game::HandleWindowEvents(sf::RenderWindow& window)
 	{
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -38,60 +43,60 @@ namespace SnakeGame
 				window.close();
 			}
 
-			if (game.gameStateStack.size() > 0)
+			if (stateStack.size() > 0)
 			{
-				HandleWindowEventGameState(game.gameStateStack.back(), event);
+				HandleWindowEventGameState(stateStack.back(), event);
 			}
 		}
 	}
 
-	bool UpdateGame(Game& game, float timeDelta)
+	bool Game::Update(float timeDelta)
 	{
-		if (game.gameStateChangeType == GameStateChangeType::Switch)
+		if (stateChangeType == GameStateChangeType::Switch)
 		{
 			// Shutdown all game states
-			while (game.gameStateStack.size() > 0)
+			while (stateStack.size() > 0)
 			{
-				ShutdownGameState(game.gameStateStack.back());
-				game.gameStateStack.pop_back();
+				ShutdownGameState(stateStack.back());
+				stateStack.pop_back();
 			}
 		}
-		else if (game.gameStateChangeType == GameStateChangeType::Pop)
+		else if (stateChangeType == GameStateChangeType::Pop)
 		{
 			// Shutdown only current game state
-			if (game.gameStateStack.size() > 0)
+			if (stateStack.size() > 0)
 			{
-				ShutdownGameState(game.gameStateStack.back());
-				game.gameStateStack.pop_back();
+				ShutdownGameState(stateStack.back());
+				stateStack.pop_back();
 			}
 		}
 
 		// Initialize new game state if needed
-		if (game.pendingGameStateType != GameStateType::None)
+		if (pendingGameStateType != GameStateType::None)
 		{
-			game.gameStateStack.push_back({ game.pendingGameStateType, nullptr, game.pendingGameStateIsExclusivelyVisible });
-			InitGameState(game.gameStateStack.back());
+			stateStack.push_back({ pendingGameStateType, nullptr, pendingGameStateIsExclusivelyVisible });
+			InitGameState(stateStack.back());
 		}
 
-		game.gameStateChangeType = GameStateChangeType::None;
-		game.pendingGameStateType = GameStateType::None;
-		game.pendingGameStateIsExclusivelyVisible = false;
+		stateChangeType = GameStateChangeType::None;
+		pendingGameStateType = GameStateType::None;
+		pendingGameStateIsExclusivelyVisible = false;
 
-		if (game.gameStateStack.size() > 0)
+		if (stateStack.size() > 0)
 		{
-			UpdateGameState(game.gameStateStack.back(), timeDelta);
+			UpdateGameState(stateStack.back(), timeDelta);
 			return true;
 		}
 
 		return false;
 	}
 
-	void DrawGame(Game& game, sf::RenderWindow& window)
+	void Game::Draw(sf::RenderWindow& window)
 	{
-		if (game.gameStateStack.size() > 0)
+		if (stateStack.size() > 0)
 		{
 			std::vector<GameState*> visibleGameStates;
-			for (auto it = game.gameStateStack.rbegin(); it != game.gameStateStack.rend(); ++it)
+			for (auto it = stateStack.rbegin(); it != stateStack.rend(); ++it)
 			{
 				visibleGameStates.push_back(&(*it));
 				if (it->isExclusivelyVisible)
@@ -107,39 +112,66 @@ namespace SnakeGame
 		}
 	}
 
-	void ShutdownGame(Game& game)
+	void Game::Shutdown()
 	{
 		// Shutdown all game states
-		while (game.gameStateStack.size() > 0)
+		while (stateStack.size() > 0)
 		{
-			ShutdownGameState(game.gameStateStack.back());
-			game.gameStateStack.pop_back();
+			ShutdownGameState(stateStack.back());
+			stateStack.pop_back();
 		}
 
-		game.gameStateChangeType = GameStateChangeType::None;
-		game.pendingGameStateType = GameStateType::None;
-		game.pendingGameStateIsExclusivelyVisible = false;
+		stateChangeType = GameStateChangeType::None;
+		pendingGameStateType = GameStateType::None;
+		pendingGameStateIsExclusivelyVisible = false;
 	}
 
-	void PushGameState(Game& game, GameStateType stateType, bool isExclusivelyVisible)
+	void Game::PushState(GameStateType stateType, bool isExclusivelyVisible)
 	{
-		game.pendingGameStateType = stateType;
-		game.pendingGameStateIsExclusivelyVisible = isExclusivelyVisible;
-		game.gameStateChangeType = GameStateChangeType::Push;
+		pendingGameStateType = stateType;
+		pendingGameStateIsExclusivelyVisible = isExclusivelyVisible;
+		stateChangeType = GameStateChangeType::Push;
 	}
 
-	void PopGameState(Game& game)
+	void Game::PopState()
 	{
-		game.pendingGameStateType = GameStateType::None;
-		game.pendingGameStateIsExclusivelyVisible = false;
-		game.gameStateChangeType = GameStateChangeType::Pop;
+		pendingGameStateType = GameStateType::None;
+		pendingGameStateIsExclusivelyVisible = false;
+		stateChangeType = GameStateChangeType::Pop;
 	}
 
-	void SwitchGameState(Game& game, GameStateType newState)
+	void Game::SwitchStateTo(GameStateType newState)
 	{
-		game.pendingGameStateType = newState;
-		game.pendingGameStateIsExclusivelyVisible = false;
-		game.gameStateChangeType = GameStateChangeType::Switch;
+		pendingGameStateType = newState;
+		pendingGameStateIsExclusivelyVisible = false;
+		stateChangeType = GameStateChangeType::Switch;
+	}
+
+	bool Game::IsEnableOptions(GameOptions option) const
+	{
+		const bool isEnable = ((std::uint8_t)options & (std::uint8_t)option) != (std::uint8_t)GameOptions::Empty;
+		return isEnable;
+	}
+
+	void Game::SetOption(GameOptions option, bool value)
+	{
+		if (value) {
+			options = (GameOptions)((std::uint8_t)options | (std::uint8_t)option);
+		}
+		else {
+			options = (GameOptions)((std::uint8_t)options & ~(std::uint8_t)option);
+		}
+	}
+
+	int Game::GetRecordByPlayerId(const std::string& playerId) const
+	{
+		auto it = recordsTable.find(playerId);
+		return it == recordsTable.end() ? 0 : it->second;
+	}
+
+	void Game::UpdateRecord(const std::string& playerId, int score)
+	{
+		recordsTable[playerId] = std::max(recordsTable[playerId], score);
 	}
 
 	void InitGameState(GameState& state)
@@ -327,11 +359,5 @@ namespace SnakeGame
 			assert(false); // We want to know if we forgot to implement new game state
 			break;
 		}
-	}
-
-	bool IsEnableOptions(const Game& game, GameOptions option)
-	{
-		bool isEnable = ((std::uint8_t)game.options & (std::uint8_t)option) != (std::uint8_t)GameOptions::Empty;
-		return isEnable;
 	}
 }

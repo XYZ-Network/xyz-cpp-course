@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 	class Game;
 

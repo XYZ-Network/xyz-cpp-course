@@ -7,7 +7,7 @@
 #include "GameStateMainMenu.h"
 #include "GameStateRecords.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 	Game::Game()

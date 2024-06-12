@@ -8,7 +8,7 @@
 #include <assert.h>
 
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 	GameState::GameState(GameStateType type, bool isExclusivelyVisible)
 		: type(type)

@@ -37,9 +37,6 @@
     <ClCompile Include="Text.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Snake.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Application.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -75,7 +72,6 @@
     <ClInclude Include="Vector.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Text.h" />
-    <ClInclude Include="Snake.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="GameState.h" />
   </ItemGroup>

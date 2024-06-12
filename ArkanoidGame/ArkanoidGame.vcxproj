@@ -170,7 +170,6 @@
     <ClCompile Include="GameStateRecords.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Text.cpp" />
-    <ClCompile Include="Snake.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -185,7 +184,6 @@
     <ClInclude Include="GameStateRecords.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Text.h" />
-    <ClInclude Include="Snake.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 	enum class GameStateType

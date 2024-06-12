@@ -4,6 +4,7 @@
 #include "Snake.h"
 #include "Sprite.h"
 #include "GameSettings.h"
+#include "GameState.h"
 #include <unordered_map>
 
 namespace SnakeGame
@@ -15,23 +16,6 @@ namespace SnakeGame
 
 		Default = InfiniteApples | WithAcceleration,
 		Empty = 0
-	};
-
-	enum class GameStateType
-	{
-		None = 0,
-		MainMenu,
-		Playing,
-		GameOver,
-		ExitDialog,
-		Records,
-	};
-
-	struct GameState
-	{
-		GameStateType type = GameStateType::None;
-		void* data = nullptr;
-		bool isExclusivelyVisible = false;
 	};
 
 	enum class GameStateChangeType
@@ -81,10 +65,4 @@ namespace SnakeGame
 		GameOptions options = GameOptions::Default;
 		RecordsTable recordsTable;
 	};
-
-	void InitGameState(GameState& state);
-	void ShutdownGameState(GameState& state);
-	void HandleWindowEventGameState(GameState& state, sf::Event& event);
-	void UpdateGameState(GameState& state, float timeDelta);
-	void DrawGameState(GameState& state, sf::RenderWindow& window);
 }

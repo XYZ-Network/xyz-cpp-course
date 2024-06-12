@@ -6,8 +6,15 @@ namespace SnakeGame
 {
 	class Game;
 
-	struct GameStatePauseMenuData
+	class GameStatePauseMenuData
 	{
+	public:
+		void Init();
+		void HandleWindowEvent(const sf::Event& event);
+		void Update(float timeDelta);
+		void Draw(sf::RenderWindow& window);
+
+	private:
 		sf::Font font;
 
 		sf::RectangleShape background;
@@ -15,10 +22,4 @@ namespace SnakeGame
 
 		Menu menu;
 	};
-
-	void InitGameStatePauseMenu(GameStatePauseMenuData& data);
-	void ShutdownGameStatePauseMenu(GameStatePauseMenuData& data);
-	void HandleGameStatePauseMenuWindowEvent(GameStatePauseMenuData& data, const sf::Event& event);
-	void UpdateGameStatePauseMenu(GameStatePauseMenuData& data, float timeDelta);
-	void DrawGameStatePauseMenu(GameStatePauseMenuData& data, sf::RenderWindow& window);
 }

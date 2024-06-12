@@ -6,8 +6,15 @@ namespace SnakeGame
 {
 	class Game;
 
-	struct GameStateRecordsData
+	class GameStateRecordsData
 	{
+	public:
+		void Init();
+		void HandleWindowEvent(const sf::Event& event);
+		void Update(float timeDelta);
+		void Draw(sf::RenderWindow& window);
+
+	private:
 		// Resources
 		sf::Font font;
 
@@ -15,10 +22,4 @@ namespace SnakeGame
 		std::vector<sf::Text> tableTexts;
 		sf::Text hintText;
 	};
-
-	void InitGameStateRecords(GameStateRecordsData& data);
-	void ShutdownGameStateRecords(GameStateRecordsData& data);
-	void HandleGameStateRecordsWindowEvent(GameStateRecordsData& data, const sf::Event& event);
-	void UpdateGameStateRecords(GameStateRecordsData& data, float timeDelta);
-	void DrawGameStateRecords(GameStateRecordsData& data, sf::RenderWindow& window);
 }

@@ -32,11 +32,6 @@ namespace ArkanoidGame
 		}
 	}
 
-	void Platform::Draw(sf::RenderWindow& window)
-	{
-		DrawSprite(sprite, window);
-	}
-
 	void Platform::Move(float speed)
 	{
 		auto position = sprite.getPosition();

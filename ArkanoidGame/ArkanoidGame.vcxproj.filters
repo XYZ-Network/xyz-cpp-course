@@ -43,6 +43,12 @@
     <ClCompile Include="GameState.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Ball.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -74,5 +80,7 @@
     <ClInclude Include="Text.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="Ball.h" />
+    <ClInclude Include="Platform.h" />
   </ItemGroup>
 </Project>

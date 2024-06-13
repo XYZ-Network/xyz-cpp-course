@@ -1,7 +1,8 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "SFML/Audio.hpp"
-
+#include "Platform.h"
+#include "Ball.h"
 
 namespace ArkanoidGame
 {
@@ -24,6 +25,8 @@ namespace ArkanoidGame
 		sf::SoundBuffer gameOverSoundBuffer;
 
 		// Game data
+		Platform platform;
+		Ball ball;
 
 		// UI data
 		sf::Text scoreText;

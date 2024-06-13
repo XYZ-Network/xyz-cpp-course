@@ -14,11 +14,10 @@ namespace ArkanoidGame
 		assert(gameOverSoundBuffer.loadFromFile(SOUNDS_PATH + "Death.wav"));
 
 		// Init background
-		background.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEGHT));
+		background.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
 		background.setPosition(0.f, 0.f);
-		background.setFillColor(sf::Color(0, 200, 0));
+		background.setFillColor(sf::Color(0, 0, 0));
 
-		
 		scoreText.setFont(font);
 		scoreText.setCharacterSize(24);
 		scoreText.setFillColor(sf::Color::Yellow);
@@ -28,6 +27,9 @@ namespace ArkanoidGame
 		inputHintText.setFillColor(sf::Color::White);
 		inputHintText.setString("Use arrow keys to move, ESC to pause");
 		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
+
+		platform.Init();
+		ball.Init();
 
 		// Init sounds
 		gameOverSound.setBuffer(gameOverSoundBuffer);
@@ -46,7 +48,15 @@ namespace ArkanoidGame
 
 	void GameStatePlayingData::Update(float timeDelta)
 	{
-		const bool isGameFinished = false; // numEatenApples == MAX_APPLES && !Application::Instance().GetGame().IsEnableOptions(GameOptions::InfiniteApples);
+		platform.Update(timeDelta);
+		ball.Update(timeDelta);
+
+		const bool isCollision = platform.CheckCollisionWithBall(ball);
+		if (isCollision) {
+			ball.ReboundFromPlatform();
+		}
+
+		const bool isGameFinished = !isCollision && ball.GetPosition().y > platform.GetRect().top;
 		
 		if (isGameFinished)
 		{
@@ -65,6 +75,11 @@ namespace ArkanoidGame
 	{
 		// Draw background
 		window.draw(background);
+
+		// Draw game objects
+		platform.Draw(window);
+		ball.Draw(window);
+
 
 		scoreText.setOrigin(GetTextOrigin(scoreText, { 0.f, 0.f }));
 		scoreText.setPosition(10.f, 10.f);

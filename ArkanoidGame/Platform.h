@@ -9,10 +9,10 @@ namespace ArkanoidGame
 	class Platform : public GameObject
 	{
 	public:
-		void Init();
-		void Update(float timeDelta);
+		void Init() override;
+		void Update(float timeDelta) override;
 		
-		bool CheckCollisionWithBall(const Ball& ball);
+		bool CheckCollisionWithBall(const Ball& ball) const;
 
 	private:
 		void Move(float speed);

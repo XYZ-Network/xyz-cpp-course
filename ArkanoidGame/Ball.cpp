@@ -29,11 +29,11 @@ namespace ArkanoidGame
 		const auto pos = sprite.getPosition() + BALL_SPEED * timeDelta * direction;
 		sprite.setPosition(pos);
 
-		if (pos.x <= 0 || pos.x >= SCREEN_WIDTH) {
+		if (pos.x - BALL_SIZE / 2.f <= 0 || pos.x + BALL_SIZE / 2.f >= SCREEN_WIDTH) {
 			direction.x *= -1;
 		}
 
-		if (pos.y <= 0 || pos.y >= SCREEN_HEIGHT) {
+		if (pos.y - BALL_SIZE / 2.f <= 0 || pos.y + BALL_SIZE / 2.f >= SCREEN_HEIGHT) {
 			direction.y *= -1;
 		}
 	}

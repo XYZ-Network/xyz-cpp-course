@@ -28,8 +28,12 @@ namespace ArkanoidGame
 		inputHintText.setString("Use arrow keys to move, ESC to pause");
 		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
 
-		platform.Init();
-		ball.Init();
+		gameObjects.emplace_back(std::make_shared<Platform>());
+		gameObjects.emplace_back(std::make_shared<Ball>());
+		
+		for (auto&& object : gameObjects) {
+			object->Init();
+		}
 
 		// Init sounds
 		gameOverSound.setBuffer(gameOverSoundBuffer);
@@ -48,15 +52,19 @@ namespace ArkanoidGame
 
 	void GameStatePlayingData::Update(float timeDelta)
 	{
-		platform.Update(timeDelta);
-		ball.Update(timeDelta);
-
-		const bool isCollision = platform.CheckCollisionWithBall(ball);
-		if (isCollision) {
-			ball.ReboundFromPlatform();
+		for (auto&& object : gameObjects) {
+			object->Update(timeDelta);
 		}
 
-		const bool isGameFinished = !isCollision && ball.GetPosition().y > platform.GetRect().top;
+		const Platform* platform = (Platform*)gameObjects[0].get();
+		Ball* ball = (Ball*)gameObjects[1].get();
+
+		const bool isCollision = platform->CheckCollisionWithBall(*ball);
+		if (isCollision) {
+			ball->ReboundFromPlatform();
+		}
+
+		const bool isGameFinished = !isCollision && ball->GetPosition().y > platform->GetRect().top;
 		
 		if (isGameFinished)
 		{
@@ -77,8 +85,9 @@ namespace ArkanoidGame
 		window.draw(background);
 
 		// Draw game objects
-		platform.Draw(window);
-		ball.Draw(window);
+		for (auto&& object : gameObjects) {
+			object->Draw(window);
+		}
 
 
 		scoreText.setOrigin(GetTextOrigin(scoreText, { 0.f, 0.f }));

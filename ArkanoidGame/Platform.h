@@ -9,7 +9,8 @@ namespace ArkanoidGame
 	class Platform : public GameObject
 	{
 	public:
-		void Init() override;
+		Platform(const sf::Vector2f& position);
+
 		void Update(float timeDelta) override;
 		
 		bool CheckCollisionWithBall(const Ball& ball) const;

@@ -2,6 +2,7 @@
 #include "GameStateData.h"
 #include "GameStatePlaying.h"
 #include "GameStateGameOver.h"
+#include "GameStateGameWin.h"
 #include "GameStatePauseMenu.h"
 #include "GameStateMainMenu.h"
 #include "GameStateRecords.h"
@@ -30,6 +31,11 @@ namespace ArkanoidGame
 		case GameStateType::GameOver:
 		{
 			data = std::make_unique<GameStateGameOverData>();
+			break;
+		}
+		case GameStateType::GameWin:
+		{
+			data = std::make_unique<GameStateGameWinData>();
 			break;
 		}
 		case GameStateType::ExitDialog:

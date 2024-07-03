@@ -1,5 +1,6 @@
 #include "GameStatePlaying.h"
 #include "Application.h"
+#include "Block.h"
 #include "Game.h"
 #include "Text.h"
 #include <assert.h>
@@ -28,11 +29,12 @@ namespace ArkanoidGame
 		inputHintText.setString("Use arrow keys to move, ESC to pause");
 		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
 
-		gameObjects.emplace_back(std::make_shared<Platform>());
-		gameObjects.emplace_back(std::make_shared<Ball>());
-		
-		for (auto&& object : gameObjects) {
-			object->Init();
+		gameObjects.emplace_back(std::make_shared<Platform>(sf::Vector2f({ SCREEN_WIDTH / 2.0, SCREEN_HEIGHT - PLATFORM_HEIGHT / 2.f })));
+		gameObjects.emplace_back(std::make_shared<Ball>(sf::Vector2f({ SCREEN_WIDTH / 2.f, SCREEN_HEIGHT - PLATFORM_HEIGHT - BALL_SIZE / 2.f } )));
+		for (int row = 0; row < BLOCKS_COUNT_ROWS; ++row) {
+			for (int col = 0; col < BLOCKS_COUNT_IN_ROW; ++col) {
+				gameObjects.emplace_back(std::make_shared<Block>(sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT), 100.f + row * BLOCK_HEIGHT })));
+			}
 		}
 
 		// Init sounds
@@ -61,19 +63,54 @@ namespace ArkanoidGame
 
 		const bool isCollision = platform->CheckCollisionWithBall(*ball);
 		if (isCollision) {
-			ball->ReboundFromPlatform();
+			ball->InvertDirectionY();
 		}
 
-		const bool isGameFinished = !isCollision && ball->GetPosition().y > platform->GetRect().top;
-		
-		if (isGameFinished)
-		{
+		bool needInverseDirX = false;
+		bool needInverseDirY = false;
+		for (size_t i = 2; i < gameObjects.size(); ++i) {
+			const auto block = (Block*)gameObjects[i].get();
+			if (block->CheckCollisionWithBall(*ball)) {
+				const auto ballPos = ball->GetPosition();
+				const auto blockRect = block->GetRect();
+
+				if (ballPos.y > blockRect.top + blockRect.height && ballPos.x >= blockRect.left && ballPos.x <= blockRect.left + blockRect.width) {
+					needInverseDirY = true;
+				}
+
+				if (ballPos.y < blockRect.top && ballPos.x >= blockRect.left && ballPos.x <= blockRect.left + blockRect.width) {
+					needInverseDirY = true;
+				}
+
+				if (ballPos.x < blockRect.left && ballPos.y >= blockRect.top && ballPos.y <= blockRect.top + blockRect.height) {
+					needInverseDirX = true;
+				}
+
+				if (ballPos.x > blockRect.left + blockRect.width && ballPos.y >= blockRect.top && ballPos.y <= blockRect.top + blockRect.height) {
+					needInverseDirX = true;
+				}
+
+				std::swap(gameObjects[i], gameObjects.back());
+				gameObjects.pop_back();
+				i--;
+			}
+		}
+		if (needInverseDirX) {
+			ball->InvertDirectionX();
+		}
+		if (needInverseDirY) {
+			ball->InvertDirectionY();
+		}
+
+		const bool isGameWin = gameObjects.size() == 2;
+		const bool isGameOver = !isCollision && ball->GetPosition().y > platform->GetRect().top;
+		Game& game = Application::Instance().GetGame();
+
+		if (isGameWin) {
+			game.PushState(GameStateType::GameWin, false);
+		} else if (isGameOver) {
 			gameOverSound.play();
 			
-			Game& game = Application::Instance().GetGame();
-
-			// Find player in records table and update his score
-			//game.UpdateRecord(PLAYER_NAME, numEatenApples);
 			game.PushState(GameStateType::GameOver, false);
 		}
 

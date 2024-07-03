@@ -3,7 +3,6 @@
 #include "GameSettings.h"
 #include "Sprite.h"
 #include <algorithm>
-#include <assert.h>
 
 namespace
 {
@@ -12,13 +11,9 @@ namespace
 
 namespace ArkanoidGame
 {
-	void Platform::Init()
-	{
-		assert(texture.loadFromFile(TEXTURES_PATH + TEXTURE_ID + ".png"));
-		
-		InitSprite(sprite, PLATFORM_WIDTH, PLATFORM_HEIGHT, texture);
-		sprite.setPosition({ SCREEN_WIDTH / 2.0, SCREEN_HEIGHT - PLATFORM_HEIGHT / 2.f });
-	}
+	Platform::Platform(const sf::Vector2f& position)
+		: GameObject(TEXTURES_PATH + TEXTURE_ID + ".png", position, PLATFORM_WIDTH, PLATFORM_HEIGHT)
+	{}
 
 	void Platform::Update(float timeDelta)
 	{

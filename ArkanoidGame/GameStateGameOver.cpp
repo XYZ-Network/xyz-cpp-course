@@ -22,7 +22,6 @@ namespace ArkanoidGame
 		gameOverText.setStyle(sf::Text::Bold);
 		gameOverText.setFillColor(sf::Color::Red);
 		gameOverText.setString("GAME OVER");
-		
 		recordsTableTexts.reserve(SETTINGS.MAX_RECORDS_TABLE_SIZE);
 
 		std::multimap<int, std::string> sortedRecordsTable;
@@ -79,11 +78,11 @@ namespace ArkanoidGame
 		{
 			if (event.key.code == sf::Keyboard::Space)
 			{
-				Application::Instance().GetGame().SwitchStateTo(GameStateType::Playing);
+				Application::Instance().GetGame().StartGame();
 			}
 			else if (event.key.code == sf::Keyboard::Escape)
 			{
-				Application::Instance().GetGame().SwitchStateTo(GameStateType::MainMenu);
+				Application::Instance().GetGame().ExitGame();
 			}
 		}
 	}

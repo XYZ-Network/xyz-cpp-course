@@ -17,6 +17,7 @@ namespace ArkanoidGame
 
 		bool GetCollision(std::shared_ptr<Colladiable> collidable) const  override;
 		void ChangeAngle(float x);
+		void restart() override;
 	private:
 		void OnHit();
 		sf::Vector2f direction;

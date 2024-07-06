@@ -16,7 +16,7 @@ namespace ArkanoidGame {
 
 		if (hitCount == 0) {
 			hitCount = 1;
-			StartTimer(BREAK_DELAY);
+			StartTimer(SETTINGS.BREAK_DELAY);
 		}
 	}
 

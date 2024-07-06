@@ -16,6 +16,11 @@ namespace ArkanoidGame
 		assert(font.loadFromFile(SETTINGS.FONTS_PATH + "Roboto-Regular.ttf"));
 		assert(gameOverSoundBuffer.loadFromFile(SETTINGS.SOUNDS_PATH + "Death.wav"));
 
+		//factoriesInit
+		factories.emplace(BlockType::Simple, std::make_unique<SimpleBlockFactory>());
+		factories.emplace(BlockType::ThreeHit, std::make_unique<ThreeHitBlockFactory>());
+		factories.emplace(BlockType::Unbreackable, std::make_unique<UnbreackableBlockFactory>());
+
 		// Init background
 		background.setSize(sf::Vector2f(SETTINGS.SCREEN_WIDTH, SETTINGS.SCREEN_HEIGHT));
 		background.setPosition(0.f, 0.f);
@@ -90,12 +95,21 @@ namespace ArkanoidGame
 			ball->InvertDirectionY();
 		}
 
-		const bool isGameWin = blocks.size() == 0;
+		const bool isGameWin = blocks.size() <= unbreackableBlocksCount;
 		const bool isGameOver = !isCollision && ball->GetPosition().y > platform->GetRect().top;
 		Game& game = Application::Instance().GetGame();
 
 		if (isGameWin) {
-			game.PushState(GameStateType::GameWin, false);
+			if (currentLevel >= levelLoder.GetLevelCount() - 1) {
+				game.PushState(GameStateType::GameWin, false);
+			}
+			else
+			{
+				blocks.clear();
+				++currentLevel;
+				createBlocks();
+			}
+		
 		}
 		else if (isGameOver) {
 			gameOverSound.play();
@@ -124,19 +138,35 @@ namespace ArkanoidGame
 
 	void GameStatePlayingData::createBlocks() 
 	{
-		int row = 0;
-		for (; row < SETTINGS.BLOCKS_COUNT_ROWS; ++row) {
-			for (int col = 0; col < SETTINGS.BLOCKS_COUNT_IN_ROW; ++col) {
-				blocks.emplace_back(std::make_shared<SmoothDestroyableBlock>(sf::Vector2f({ SETTINGS.BLOCK_SHIFT + SETTINGS.BLOCK_WIDTH / 2.f + col * (SETTINGS.BLOCK_WIDTH + SETTINGS.BLOCK_SHIFT), 100.f + row * SETTINGS.BLOCK_HEIGHT })));
-			}
+		for (const auto& pair : factories)
+		{
+			pair.second->ClearCounter();
+		}
+		auto& settings = SETTINGS;
+
+		auto level = levelLoder.GetLevel(currentLevel);
+
+		for (auto pairPosBlockTYpe : level.m_blocks)
+		{
+			auto blockType = pairPosBlockTYpe.second;
+			sf::Vector2i pos = pairPosBlockTYpe.first;
+
+			sf::Vector2f position{
+				(float)(settings.BLOCK_SHIFT + settings.BLOCK_WIDTH / 2.f + pos.x * (settings.BLOCK_WIDTH + settings.BLOCK_SHIFT))
+				, (float)pos.y * settings.BLOCK_HEIGHT
+			};
+
+
+			blocks.emplace_back(factories.at(blockType)->CreateBlock(position));
 		}
 
-		for (int col = 0; col < 3; ++col) {
-			blocks.emplace_back(std::make_shared<UnbreackableBlock>(sf::Vector2f({ SETTINGS.BLOCK_SHIFT + SETTINGS.BLOCK_WIDTH / 2.f + col * (SETTINGS.BLOCK_WIDTH + SETTINGS.BLOCK_SHIFT), 100.f + row * SETTINGS.BLOCK_HEIGHT })));
+
+		int breackableCount = 0;
+		for (const auto& pair : factories)
+		{
+			breackableCount += pair.second->GetcreatedBreackableBlocksCount();
 		}
-		for (int col = 4; col < 7; ++col) {
-			blocks.emplace_back(std::make_shared<ThreeHitBlock>(sf::Vector2f({ SETTINGS.BLOCK_SHIFT + SETTINGS.BLOCK_WIDTH / 2.f + col * (SETTINGS.BLOCK_WIDTH + SETTINGS.BLOCK_SHIFT), 100.f + row * SETTINGS.BLOCK_HEIGHT })));
-		}
+		unbreackableBlocksCount = blocks.size() - breackableCount;
 	}
 
 	void GameStatePlayingData::GetBallInverse(const sf::Vector2f& ballPos, const sf::FloatRect& blockRect, bool& needInverseDirX, bool& needInverseDirY) {

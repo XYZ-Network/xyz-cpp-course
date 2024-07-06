@@ -192,6 +192,7 @@
     <ClInclude Include="GameStateGameWin.h" />
     <ClInclude Include="ICollidable.h" />
     <ClInclude Include="IDelayedAction.h" />
+    <ClInclude Include="IObserver.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="randomizer.h" />

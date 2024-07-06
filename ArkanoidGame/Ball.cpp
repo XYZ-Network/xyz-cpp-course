@@ -33,6 +33,7 @@ namespace ArkanoidGame
 		if (pos.y - SETTINGS.BALL_SIZE / 2.f <= 0 || pos.y + SETTINGS.BALL_SIZE / 2.f >= SETTINGS.SCREEN_HEIGHT) {
 			direction.y *= -1;
 		}
+		Emit();
 	}
 
 	void Ball::InvertDirectionX()

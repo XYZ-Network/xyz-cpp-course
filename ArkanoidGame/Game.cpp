@@ -15,11 +15,11 @@ namespace ArkanoidGame
 		// Generate fake records table
 		recordsTable =
 		{
-			{"John", MAX_APPLES / 2},
-			{"Jane", MAX_APPLES / 3 },
-			{"Alice", MAX_APPLES / 4 },
-			{"Bob", MAX_APPLES / 5 },
-			{"Clementine", MAX_APPLES / 5 },
+			{"John", SETTINGS.MAX_APPLES / 2},
+			{"Jane", SETTINGS.MAX_APPLES / 3 },
+			{"Alice", SETTINGS.MAX_APPLES / 4 },
+			{"Bob", SETTINGS.MAX_APPLES / 5 },
+			{"Clementine", SETTINGS.MAX_APPLES / 5 },
 		};
 
 		stateChangeType = GameStateChangeType::None;

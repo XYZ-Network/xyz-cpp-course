@@ -14,9 +14,8 @@ namespace ArkanoidGame
 		startGame.text.setFont(font);
 		startGame.text.setCharacterSize(24);
 		startGame.onPressCallback = [](MenuItem&) {
-			Application::Instance().GetGame().SwitchStateTo(GameStateType::Playing);
+			Application::Instance().GetGame().StartGame();
 			};
-		
 		const bool isInfiniteApples = Application::Instance().GetGame().IsEnableOptions(GameOptions::InfiniteApples);
 		MenuItem optionsInfiniteApplesItem;
 		optionsInfiniteApplesItem.text.setString("Infinite Apples: " + std::string(isInfiniteApples ? "On" : "Off"));
@@ -54,13 +53,12 @@ namespace ArkanoidGame
 		options.childrenSpacing = 10.f;
 		options.childrens.push_back(optionsInfiniteApplesItem);
 		options.childrens.push_back(optionsWithAccelerationItem);
-		
 		MenuItem recordsItem;
 		recordsItem.text.setString("Records");
 		recordsItem.text.setFont(font);
 		recordsItem.text.setCharacterSize(24);
 		recordsItem.onPressCallback = [](MenuItem&) {
-			Application::Instance().GetGame().PushState(GameStateType::Records, true);
+			Application::Instance().GetGame().ShowRecords();
 			};
 
 		MenuItem yesItem;
@@ -68,7 +66,7 @@ namespace ArkanoidGame
 		yesItem.text.setFont(font);
 		yesItem.text.setCharacterSize(24);
 		yesItem.onPressCallback = [](MenuItem&) {
-			Application::Instance().GetGame().SwitchStateTo(GameStateType::None);
+			Application::Instance().GetGame().QuitGame();
 			};
 
 		MenuItem noItem;
@@ -105,7 +103,6 @@ namespace ArkanoidGame
 		mainMenu.childrens.push_back(options);
 		mainMenu.childrens.push_back(recordsItem);
 		mainMenu.childrens.push_back(exitGameItem);
-		
 
 		menu.Init(mainMenu);
 	}

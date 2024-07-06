@@ -39,7 +39,7 @@ namespace ArkanoidGame
 
 		template<class T>
 		T* GetData() const {
-			return static_cast<T>(data);
+			return static_cast<T*>(data.get());
 		}
 
 		void Update(float timeDelta);

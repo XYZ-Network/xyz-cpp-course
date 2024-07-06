@@ -64,6 +64,12 @@
     <ClCompile Include="ThreeHitBlock.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="BlockFactory.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelLoader.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -109,5 +115,11 @@
     </ClInclude>
     <ClInclude Include="IDelayedAction.h" />
     <ClInclude Include="ThreeHitBlock.h" />
+    <ClInclude Include="BlockFactory.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelLoader.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

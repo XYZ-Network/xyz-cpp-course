@@ -187,6 +187,7 @@
     <ClInclude Include="GameStateData.h" />
     <ClInclude Include="GameStateGameWin.h" />
     <ClInclude Include="ICollidable.h" />
+    <ClInclude Include="IDelayedAction.h" />
     <ClInclude Include="Platform.h" />
     <ClInclude Include="randomizer.h" />
     <ClInclude Include="Sprite.h" />

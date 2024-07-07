@@ -104,5 +104,6 @@
     <ClInclude Include="randomizer.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="IDelayedAction.h" />
   </ItemGroup>
 </Project>

@@ -122,11 +122,17 @@ namespace ArkanoidGame
 
 	void GameStatePlayingData::createBlocks() 
 	{
-		for (int row = 0; row < BLOCKS_COUNT_ROWS; ++row) {
+		int row = 0;
+		for (; row < BLOCKS_COUNT_ROWS; ++row) {
 			for (int col = 0; col < BLOCKS_COUNT_IN_ROW; ++col) {
-				blocks.emplace_back(std::make_shared<Block>(sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT), 100.f + row * BLOCK_HEIGHT })));
+				blocks.emplace_back(std::make_shared<SmoothDestroyableBlock>(sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT), 100.f + row * BLOCK_HEIGHT })));
 			}
 		}
+
+		for (int col = 0; col < 3; ++col) {
+			blocks.emplace_back(std::make_shared<UnbreackableBlock>(sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT), 100.f + row * BLOCK_HEIGHT })));
+		}
+
 	}
 
 	void GameStatePlayingData::GetBallInverse(const sf::Vector2f& ballPos, const sf::FloatRect& blockRect, bool& needInverseDirX, bool& needInverseDirY) {

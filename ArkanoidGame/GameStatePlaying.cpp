@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "Text.h"
 #include "ThreeHitBlock.h"
+#include "randomizer.h"
 
 #include <assert.h>
 #include <sstream>
@@ -36,8 +37,8 @@ namespace ArkanoidGame
 		inputHintText.setString("Use arrow keys to move, ESC to pause");
 		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
 
-		gameObjects.emplace_back(std::make_shared<Platform>(sf::Vector2f({ SETTINGS.SCREEN_WIDTH / 2.f, SETTINGS.SCREEN_HEIGHT - SETTINGS.PLATFORM_HEIGHT / 2.f })));
-		auto ball = std::make_shared<Ball>(sf::Vector2f({ SETTINGS.SCREEN_WIDTH / 2.f, SETTINGS.SCREEN_HEIGHT - SETTINGS.PLATFORM_HEIGHT - SETTINGS.BALL_SIZE / 2.f }));
+		auto platform = std::make_shared<Platform>(sf::Vector2f({ SETTINGS.SCREEN_WIDTH / 2.f, SETTINGS.SCREEN_HEIGHT - SETTINGS.PLATFORM_HEIGHT / 2.f }));
+		gameObjects.emplace_back(platform);		auto ball = std::make_shared<Ball>(sf::Vector2f({ SETTINGS.SCREEN_WIDTH / 2.f, SETTINGS.SCREEN_HEIGHT - SETTINGS.PLATFORM_HEIGHT - SETTINGS.BALL_SIZE / 2.f }));
 		ball->AddObserver(weak_from_this());
 		gameObjects.emplace_back(ball);
 
@@ -45,6 +46,41 @@ namespace ArkanoidGame
 
 		// Init sounds
 		gameOverSound.setBuffer(gameOverSoundBuffer);
+		bonusSound.setBuffer(bonusSoundBuffer);
+		bonuses.emplace(BonusType::BiggerPlatform, Bonus(
+			[wplatform = std::weak_ptr<Platform>(platform), &sound = bonusSound]() {
+			auto platform = wplatform.lock();
+			if (platform) {
+				sound.play();
+				platform->ChangeWidth(2);
+			}
+		},
+			[wplatform = std::weak_ptr<Platform>(platform)]() {
+			auto platform = wplatform.lock();
+			if (platform) {
+
+				platform->ChangeWidth(0.5);
+			}
+		},
+			SETTINGS.BONUS_DURATION
+			));
+
+		bonuses.emplace(BonusType::SlowBall, Bonus(
+			[wball = std::weak_ptr<Ball>(ball), &sound = bonusSound]() {
+			auto ball = wball.lock();
+			if (ball) {
+				sound.play();
+				ball->ChangeSpeed(0.5);
+			}
+		},
+			[wball = std::weak_ptr<Ball>(ball)]() {
+			auto ball = wball.lock();
+			if (ball) {
+				ball->ChangeSpeed(1);
+			}
+		},
+			SETTINGS.BONUS_DURATION
+			));
 	}
 
 	void GameStatePlayingData::HandleWindowEvent(const sf::Event& event)
@@ -64,7 +100,9 @@ namespace ArkanoidGame
 
 		std::for_each(gameObjects.begin(), gameObjects.end(), updateFunctor);
 		std::for_each(blocks.begin(), blocks.end(), updateFunctor);
-
+		std::for_each(bonuses.begin(), bonuses.end(), [timeDelta](auto& bonusPair) {
+			bonusPair.second.Update(timeDelta);
+			});
 
 		std::shared_ptr <Platform> platform = std::dynamic_pointer_cast<Platform>(gameObjects[0]);
 		std::shared_ptr<Ball> ball = std::dynamic_pointer_cast<Ball>(gameObjects[1]);
@@ -193,6 +231,14 @@ namespace ArkanoidGame
 			Game& game = Application::Instance().GetGame();
 			if (breackableBlocksCount == 0) {
 				game.LoadNextLevel();
+			}
+			else
+			{
+				auto percent = random<int>(0, 100);
+				if (SETTINGS.BONUS_PROPABILITY_PERCENT >= percent) {
+					BonusType bonusType = (BonusType)(random<int>(0, (int)BonusType::Count - 1));
+					bonuses.at(bonusType).Activate();
+				}
 			}
 		}
 		else if (auto ball = std::dynamic_pointer_cast<Ball>(observable); ball)

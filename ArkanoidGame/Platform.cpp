@@ -68,4 +68,9 @@ namespace ArkanoidGame
 		}
 		return false;
 	}
+
+	void Platform::ChangeWidth(float multiplyWidth)
+	{
+		sprite.scale(sf::Vector2f(multiplyWidth, 1));
+	}
 }

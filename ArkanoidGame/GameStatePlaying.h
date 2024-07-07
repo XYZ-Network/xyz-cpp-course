@@ -7,6 +7,7 @@
 #include "LevelLoader.h"
 #include "BlockFactory.h"
 #include "IObserver.h"
+#include "Bonus.h"
 
 #include <unordered_map>
 
@@ -15,6 +16,14 @@ namespace ArkanoidGame
 	class Game;
 	class Block;
 	class BlockFactory;
+
+	enum class BonusType
+	{
+		BiggerPlatform,
+		SlowBall,
+
+		Count
+	};
 
 	class GameStatePlayingData : public GameStateData, public IObserver, public std::enable_shared_from_this<GameStatePlayingData>
 	{
@@ -37,6 +46,7 @@ namespace ArkanoidGame
 		sf::Font font;
 		sf::SoundBuffer eatAppleSoundBuffer;
 		sf::SoundBuffer gameOverSoundBuffer;
+		sf::SoundBuffer bonusSoundBuffer;
 
 		// Game data
 		std::vector<std::shared_ptr<GameObject>> gameObjects;
@@ -49,6 +59,7 @@ namespace ArkanoidGame
 
 		// Sounds
 		sf::Sound gameOverSound;
+		sf::Sound bonusSound;
 
 		//Blocks creator
 		std::unordered_map<BlockType, std::unique_ptr<BlockFactory>> factories;
@@ -58,5 +69,8 @@ namespace ArkanoidGame
 		LevelLoader levelLoder;
 		int currentLevel = 0;
 
+
+		//Bonus
+		std::map<BonusType, Bonus> bonuses;
 	};
 }

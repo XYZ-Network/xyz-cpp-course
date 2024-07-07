@@ -23,6 +23,7 @@ namespace ArkanoidGame
 
 	void Ball::Update(float timeDelta)
 	{
+		timeDelta = multiplySpeed * timeDelta;
 		const auto pos = sprite.getPosition() + SETTINGS.BALL_SPEED * timeDelta * direction;
 		sprite.setPosition(pos);
 
@@ -73,5 +74,10 @@ namespace ArkanoidGame
 		const auto pi = std::acos(-1.f);
 		direction.x = std::cos(pi / 180.f * angle);
 		direction.y = std::sin(pi / 180.f * angle);
+	}
+
+	void Ball::ChangeSpeed(float multipleSpeed)
+	{
+		multiplySpeed = multipleSpeed;
 	}
 }

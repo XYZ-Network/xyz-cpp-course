@@ -98,5 +98,11 @@
     <ClInclude Include="GameStateData.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="GameStateGameWin.h" />
+    <ClInclude Include="Collidable.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="randomizer.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

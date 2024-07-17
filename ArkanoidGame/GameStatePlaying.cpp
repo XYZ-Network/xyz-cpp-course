@@ -3,6 +3,8 @@
 #include "Block.h"
 #include "Game.h"
 #include "Text.h"
+#include "ThreeHitBlock.h"
+
 #include <assert.h>
 #include <sstream>
 
@@ -132,7 +134,9 @@ namespace ArkanoidGame
 		for (int col = 0; col < 3; ++col) {
 			blocks.emplace_back(std::make_shared<UnbreackableBlock>(sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT), 100.f + row * BLOCK_HEIGHT })));
 		}
-
+		for (int col = 4; col < 7; ++col) {
+			blocks.emplace_back(std::make_shared<ThreeHitBlock>(sf::Vector2f({ BLOCK_SHIFT + BLOCK_WIDTH / 2.f + col * (BLOCK_WIDTH + BLOCK_SHIFT), 100.f + row * BLOCK_HEIGHT })));
+		}
 	}
 
 	void GameStatePlayingData::GetBallInverse(const sf::Vector2f& ballPos, const sf::FloatRect& blockRect, bool& needInverseDirX, bool& needInverseDirY) {

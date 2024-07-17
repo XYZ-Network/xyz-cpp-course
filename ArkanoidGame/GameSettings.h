@@ -47,6 +47,8 @@ namespace ArkanoidGame
 
 		const std::string GAME_NAME = "ArkanoidGame";
 		const float BREAK_DELAY = 1.f;
+		const float BONUS_DURATION = 30.f;
+		const int BONUS_PROPABILITY_PERCENT = 5;
 	};
 }
 

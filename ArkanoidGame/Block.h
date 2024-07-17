@@ -3,10 +3,11 @@
 #include "GameObject.h"
 #include "Collidable.h"
 #include "IDelayedAction.h"
+#include "IObserver.h"
 
 namespace ArkanoidGame
 {
-	class Block : public GameObject, public Colladiable
+	class Block : public GameObject, public Colladiable, public IObservable
 	{
 	protected:
 		void OnHit();

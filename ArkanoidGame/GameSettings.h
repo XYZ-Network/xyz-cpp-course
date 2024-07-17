@@ -33,4 +33,5 @@ namespace ArkanoidGame
 	extern const char* PLAYER_NAME; // We need to define this constant in some CPP
 
 	const std::string GAME_NAME = "ArkanoidGame";
+	const float BREAK_DELAY = 1.f;
 }
